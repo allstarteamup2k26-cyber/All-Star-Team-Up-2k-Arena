@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All-Star Team-Up 2K Arena • Private 5v5 Player Control Tournaments</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,800;0,900;1,900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+
+:root {
+  --ink:    #060606;
+  --smoke:  #0e0e0e;
+  --ash:    #1a1a1a;
+  --mid:    #2e2e2e;
+  --steel:  #555;
+  --mute:   #888;
+  --white:  #F7F7F7;
+  --k26ps5: #00CFFF;
+  --k26ps4: #FF6B00;
+  --k25ps5: #A259FF;
+  --k25ps4: #F5C518;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body { background:var(--ink); color:var(--white); font-family:'Inter',sans-serif; overflow-x:hidden; line-height:1.6; }
+
+/* ══ NAV ══ */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:200;
+  height:54px; display:flex; align-items:center; justify-content:space-between;
+  padding:0 32px; background:rgba(6,6,6,.92); border-bottom:1px solid var(--ash);
+  backdrop-filter:blur(16px);
+}
+.nav-logo {
+  font-family:'Bebas Neue',sans-serif; font-size:1.1rem; letter-spacing:.14em;
+  color:var(--white); text-decoration:none; display:flex; align-items:center; gap:8px;
+}
+.nav-logo .logo-icon { font-size:1.2rem; }
+.nav-discord {
+  font-family:'JetBrains Mono',monospace; font-size:.62rem; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--mute); text-decoration:none;
+  border:1px solid var(--ash); padding:5px 14px; border-radius:100px;
+  transition:color .15s, border-color .15s;
+}
+.nav-discord:hover { color:var(--white); border-color:var(--steel); }
+
+/* ══ HERO ══ */
+.hero {
+  min-height:100vh; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; text-align:center;
+  padding:100px 24px 60px; position:relative; overflow:hidden;
+}
+
+/* basketball court floor feel */
+.hero-floor {
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 100% 50% at 50% 110%, rgba(245,197,24,.06) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 40% at 20% 30%, rgba(255,107,0,.07) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 80% 30%, rgba(0,207,255,.07) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 35% at 50% 0%,  rgba(162,89,255,.06) 0%, transparent 55%),
+    var(--ink);
+}
+.hero-grid {
+  position:absolute; inset:0; pointer-events:none;
+  background-image:
+    repeating-linear-gradient(0deg,transparent,transparent 79px,rgba(255,255,255,.018) 80px),
+    repeating-linear-gradient(90deg,transparent,transparent 79px,rgba(255,255,255,.018) 80px);
+}
+/* court arc */
+.court-arc {
+  position:absolute; bottom:-60px; left:50%; transform:translateX(-50%);
+  width:700px; height:380px;
+  border:1.5px solid rgba(245,197,24,.07);
+  border-radius:50% 50% 0 0; border-bottom:none;
+}
+.court-arc-2 {
+  position:absolute; bottom:-60px; left:50%; transform:translateX(-50%);
+  width:440px; height:240px;
+  border:1px solid rgba(245,197,24,.04);
+  border-radius:50% 50% 0 0; border-bottom:none;
+}
+.court-center {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:160px; height:160px; border-radius:50%;
+  border:1px solid rgba(255,255,255,.03);
+}
+
+/* floating color orbs */
+.orb { position:absolute; border-radius:50%; filter:blur(80px); opacity:.12; pointer-events:none; }
+.o1 { width:360px; height:360px; background:var(--k26ps5); top:10%; left:-5%; animation:orb 9s ease-in-out infinite; }
+.o2 { width:300px; height:300px; background:var(--k26ps4); bottom:15%; right:-5%; animation:orb 11s ease-in-out infinite reverse; }
+.o3 { width:250px; height:250px; background:var(--k25ps5); top:20%; right:10%; animation:orb 7s ease-in-out infinite 2s; }
+.o4 { width:280px; height:280px; background:var(--k25ps4); bottom:25%; left:5%; animation:orb 10s ease-in-out infinite 4s; }
+@keyframes orb { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-30px) scale(1.06)} }
+
+.hero-content { position:relative; z-index:10; max-width:860px; }
+
+.hero-eyebrow {
+  font-family:'JetBrains Mono',monospace; font-size:.65rem; letter-spacing:.35em;
+  text-transform:uppercase; color:var(--steel); margin-bottom:28px;
+  display:flex; align-items:center; justify-content:center; gap:12px;
+}
+.hero-eyebrow::before, .hero-eyebrow::after {
+  content:''; height:1px; width:40px; background:var(--mid);
+}
+
+/* BIG stacked headline */
+.hero-headline { margin-bottom:24px; }
+.hl-top {
+  display:block; font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(1.2rem,4vw,2.2rem); letter-spacing:.3em;
+  color:var(--steel); margin-bottom:4px;
+}
+.hl-main {
+  display:block; font-family:'Barlow Condensed',sans-serif;
+  font-weight:900; font-style:italic;
+  font-size:clamp(4.5rem,16vw,11rem); line-height:.82;
+  letter-spacing:-.01em; text-transform:uppercase;
+  background:linear-gradient(135deg, var(--k26ps4) 0%, var(--k25ps4) 30%, var(--white) 50%, var(--k26ps5) 70%, var(--k25ps5) 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  background-size:200%; animation:shine 5s ease infinite;
+}
+@keyframes shine { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+.hl-sub {
+  display:block; font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(1.8rem,6vw,4.5rem); letter-spacing:.16em;
+  color:var(--white); margin-top:4px;
+}
+.hl-game {
+  display:block; font-family:'JetBrains Mono',monospace;
+  font-size:clamp(.75rem,2vw,1rem); letter-spacing:.28em;
+  color:var(--mute); text-transform:uppercase; margin-top:16px;
+  font-weight:600;
+}
+
+.hero-desc {
+  font-size:clamp(.88rem,1.8vw,1rem); color:var(--steel);
+  max-width:520px; margin:0 auto 40px; line-height:1.8;
+}
+.hero-desc strong { color:var(--mute); }
+
+/* prize strip */
+.prize-strip {
+  display:flex; gap:0; justify-content:center; flex-wrap:wrap;
+  margin-bottom:44px; border:1px solid var(--ash); border-radius:3px;
+  overflow:hidden; max-width:600px; margin-left:auto; margin-right:auto;
+}
+.prize-item {
+  flex:1; min-width:120px; padding:16px 20px; text-align:center;
+  border-right:1px solid var(--ash); background:var(--smoke);
+}
+.prize-item:last-child { border-right:none; }
+.prize-val {
+  font-family:'Bebas Neue',sans-serif; font-size:1.8rem; line-height:1;
+  margin-bottom:3px;
+}
+.prize-lbl {
+  font-family:'JetBrains Mono',monospace; font-size:.5rem;
+  letter-spacing:.15em; text-transform:uppercase; color:var(--steel);
+}
+
+.scroll-hint {
+  font-family:'JetBrains Mono',monospace; font-size:.6rem;
+  letter-spacing:.2em; text-transform:uppercase; color:var(--steel);
+  display:flex; align-items:center; gap:8px; justify-content:center;
+  margin-top:8px;
+}
+.bounce { animation:bounce 1.2s ease-in-out infinite; display:inline-block; }
+@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+
+/* ══ TOURNAMENT CARDS SECTION ══ */
+.cards-section { padding:80px 24px; max-width:1080px; margin:0 auto; }
+.section-label {
+  font-family:'JetBrains Mono',monospace; font-size:.62rem;
+  letter-spacing:.28em; text-transform:uppercase; color:var(--steel);
+  text-align:center; margin-bottom:8px;
+}
+.section-title {
+  font-family:'Bebas Neue',sans-serif; font-size:clamp(2rem,5vw,3.5rem);
+  text-align:center; letter-spacing:.06em; color:var(--white); margin-bottom:48px;
+}
+
+.cards-grid {
+  display:grid; grid-template-columns:repeat(2,1fr); gap:16px;
+}
+@media(max-width:640px){ .cards-grid{ grid-template-columns:1fr; } }
+
+/* individual tournament card */
+.t-card {
+  display:block; text-decoration:none;
+  background:var(--smoke); border-radius:5px;
+  border:1px solid var(--ash); overflow:hidden;
+  transition:transform .2s, box-shadow .2s, border-color .2s;
+  position:relative;
+}
+.t-card:hover {
+  transform:translateY(-5px);
+  box-shadow:0 16px 48px rgba(0,0,0,.5);
+  border-color:var(--c);
+}
+
+/* colored top bar */
+.t-card::after {
+  content:''; position:absolute; top:0; left:0; right:0;
+  height:3px; background:var(--c);
+}
+/* colored glow on hover */
+.t-card::before {
+  content:''; position:absolute; inset:0;
+  background:var(--c); opacity:0; transition:opacity .2s;
+  border-radius:5px;
+}
+.t-card:hover::before { opacity:.04; }
+
+.t-card-body { padding:28px 28px 20px; position:relative; z-index:1; }
+
+.t-game {
+  font-family:'Bebas Neue',sans-serif; font-size:2.4rem;
+  letter-spacing:.06em; color:var(--white); line-height:1;
+  margin-bottom:2px;
+}
+.t-console {
+  font-family:'JetBrains Mono',monospace; font-size:.6rem;
+  letter-spacing:.18em; text-transform:uppercase; color:var(--c);
+  margin-bottom:14px; display:flex; align-items:center; gap:6px;
+}
+.t-console::before {
+  content:''; display:inline-block; width:6px; height:6px;
+  border-radius:50%; background:var(--c);
+  box-shadow:0 0 8px var(--c);
+}
+.t-tourney-name {
+  font-family:'Barlow Condensed',sans-serif; font-weight:800;
+  font-size:1.1rem; text-transform:uppercase; letter-spacing:.04em;
+  color:rgba(255,255,255,.6); line-height:1.2; margin-bottom:20px;
+}
+
+.t-stats {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:0; border:1px solid var(--ash); border-radius:3px;
+  overflow:hidden; margin-bottom:20px;
+}
+.t-stat {
+  padding:10px 8px; text-align:center;
+  border-right:1px solid var(--ash); background:var(--ink);
+}
+.t-stat:last-child { border-right:none; }
+.t-stat-v {
+  font-family:'Bebas Neue',sans-serif; font-size:1.3rem;
+  color:var(--c); line-height:1;
+}
+.t-stat-l {
+  font-family:'JetBrains Mono',monospace; font-size:.46rem;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--steel);
+  margin-top:2px;
+}
+
+.t-card-footer {
+  border-top:1px solid var(--ash); padding:14px 28px;
+  display:flex; align-items:center; justify-content:space-between;
+  position:relative; z-index:1;
+}
+.t-prices { display:flex; gap:8px; }
+.tp {
+  font-family:'JetBrains Mono',monospace; font-size:.62rem;
+  letter-spacing:.06em; padding:5px 12px; border-radius:2px;
+  text-transform:uppercase; font-weight:700;
+}
+.tp-team { background:var(--c); color:#000; }
+.tp-solo { border:1px solid var(--c); color:var(--c); background:transparent; opacity:.8; }
+.t-cta {
+  font-family:'Inter',sans-serif; font-weight:700; font-size:.75rem;
+  letter-spacing:.06em; text-transform:uppercase; color:var(--c);
+  display:flex; align-items:center; gap:5px;
+  transition:gap .15s;
+}
+.t-card:hover .t-cta { gap:10px; }
+
+/* color vars per card */
+.c-cyan  { --c: var(--k26ps5); }
+.c-fire  { --c: var(--k26ps4); }
+.c-purple{ --c: var(--k25ps5); }
+.c-gold  { --c: var(--k25ps4); }
+
+/* 2K25 card spans full width */
+.card-wide { grid-column: 1 / -1; }
+.card-wide .t-stats { grid-template-columns: repeat(4,1fr); }
+
+/* ══ HOF STRIP ══ */
+.hof-strip {
+  background:rgba(255,107,0,.05); border-top:1px solid rgba(255,107,0,.15);
+  border-bottom:1px solid rgba(255,107,0,.15); padding:14px 24px;
+  text-align:center;
+}
+.hof-strip p {
+  font-family:'JetBrains Mono',monospace; font-size:.64rem;
+  letter-spacing:.18em; text-transform:uppercase; color:rgba(255,107,0,.75);
+}
+
+/* ══ HOW IT WORKS ══ */
+.how-section { padding:80px 24px; max-width:1080px; margin:0 auto; }
+.steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; }
+.step {
+  background:var(--smoke); border:1px solid var(--ash);
+  border-radius:4px; padding:28px;
+}
+.step-num {
+  font-family:'Bebas Neue',sans-serif; font-size:3.5rem; line-height:1;
+  margin-bottom:10px; opacity:.25;
+}
+.step h4 {
+  font-size:.88rem; font-weight:700; text-transform:uppercase;
+  letter-spacing:.06em; color:var(--white); margin-bottom:8px;
+}
+.step p { font-size:.82rem; color:var(--steel); line-height:1.7; }
+
+/* ══ FOOTER ══ */
+footer {
+  border-top:1px solid var(--ash); padding:36px 24px;
+  text-align:center; background:var(--ink);
+}
+.footer-brand {
+  font-family:'Bebas Neue',sans-serif; font-size:1.3rem;
+  letter-spacing:.12em; color:var(--white); margin-bottom:12px;
+}
+.footer-links {
+  display:flex; gap:20px; justify-content:center; flex-wrap:wrap; margin-bottom:16px;
+}
+.footer-links a {
+  font-family:'JetBrains Mono',monospace; font-size:.6rem;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--steel);
+  text-decoration:none; transition:color .15s;
+}
+.footer-links a:hover { color:var(--white); }
+.footer-copy {
+  font-family:'JetBrains Mono',monospace; font-size:.55rem;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--mid);
+}
+
+/* ══ ANIMATIONS ══ */
+@keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+.hero-content > * { animation:fadeUp .7s ease both; }
+.hero-content > *:nth-child(1){animation-delay:.1s}
+.hero-content > *:nth-child(2){animation-delay:.2s}
+.hero-content > *:nth-child(3){animation-delay:.35s}
+.hero-content > *:nth-child(4){animation-delay:.5s}
+.hero-content > *:nth-child(5){animation-delay:.6s}
+.hero-content > *:nth-child(6){animation-delay:.7s}
+
+@media(max-width:500px){
+  nav { padding:0 16px; }
+  .prize-strip { flex-direction:column; }
+  .prize-item { border-right:none; border-bottom:1px solid var(--ash); }
+  .prize-item:last-child { border-bottom:none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <span class="logo-icon">🏀</span>
+    ALL-STAR TEAM-UP ARENA
+  </a>
+  <a href="https://discord.gg/TDvwrybZ2S" target="_blank" class="nav-discord">discord.gg/TDvwrybZ2S</a>
+</nav>
+
+<!-- ══════════════════ HERO ══════════════════ -->
+<section class="hero" id="top">
+  <div class="hero-floor"></div>
+  <div class="hero-grid"></div>
+  <div class="court-arc"></div>
+  <div class="court-arc-2"></div>
+  <div class="court-center"></div>
+  <div class="orb o1"></div>
+  <div class="orb o2"></div>
+  <div class="orb o3"></div>
+  <div class="orb o4"></div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">Organized by Elijah Martinez · @all_star_team_up</div>
+
+    <div class="hero-headline">
+      <span class="hl-top">1st Ever</span>
+      <span class="hl-main">ALL-STAR</span>
+      <span class="hl-sub">Team-Up Tournament</span>
+      <span class="hl-game">5v5 · Player Control · Hall of Fame Difficulty · NBA 2K25 & 2K26</span>
+    </div>
+
+    <p class="hero-desc">
+      <strong>Private 5v5 Player Control Tournaments • Hall of Fame Difficulty</strong><br>
+      Four tournaments. Two games. Two consoles. <strong>One community.</strong>
+      Round Robin seeding into a full Double Elimination bracket.
+      Register as a full squad or go solo — we'll build your team.
+    </p>
+
+    <div class="prize-strip">
+      <div class="prize-item">
+        <div class="prize-val" style="color:var(--k26ps5)">3</div>
+        <div class="prize-lbl">Tournaments</div>
+      </div>
+      <div class="prize-item">
+        <div class="prize-val" style="color:var(--k26ps4)">$1,350</div>
+        <div class="prize-lbl">Total Prize Money</div>
+      </div>
+      <div class="prize-item">
+        <div class="prize-val" style="color:var(--k25ps5)">48</div>
+        <div class="prize-lbl">Teams Max</div>
+      </div>
+      <div class="prize-item">
+        <div class="prize-val" style="color:var(--k25ps4)">5v5</div>
+        <div class="prize-lbl">Player Control</div>
+      </div>
+    </div>
+
+    <!-- COUNTDOWN TIMER -->
+    <div id="countdown" style="margin: 32px auto 0; max-width: 520px; text-align: center;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:.65rem; letter-spacing:.2em; color:var(--gold); text-transform:uppercase; margin-bottom:12px;">
+        Registration Opens In
+      </div>
+      <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+        <div class="count-box" style="background:var(--smoke); border:1px solid var(--ash); border-radius:4px; padding:12px 18px; min-width:70px;">
+          <div id="days" style="font-family:'Bebas Neue',sans-serif; font-size:2.2rem; line-height:1; color:var(--gold);">01</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:.55rem; letter-spacing:.15em; color:var(--steel); text-transform:uppercase;">Days</div>
+        </div>
+        <div class="count-box" style="background:var(--smoke); border:1px solid var(--ash); border-radius:4px; padding:12px 18px; min-width:70px;">
+          <div id="hours" style="font-family:'Bebas Neue',sans-serif; font-size:2.2rem; line-height:1; color:var(--gold);">12</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:.55rem; letter-spacing:.15em; color:var(--steel); text-transform:uppercase;">Hours</div>
+        </div>
+        <div class="count-box" style="background:var(--smoke); border:1px solid var(--ash); border-radius:4px; padding:12px 18px; min-width:70px;">
+          <div id="minutes" style="font-family:'Bebas Neue',sans-serif; font-size:2.2rem; line-height:1; color:var(--gold);">45</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:.55rem; letter-spacing:.15em; color:var(--steel); text-transform:uppercase;">Min</div>
+        </div>
+        <div class="count-box" style="background:var(--smoke); border:1px solid var(--ash); border-radius:4px; padding:12px 18px; min-width:70px;">
+          <div id="seconds" style="font-family:'Bebas Neue',sans-serif; font-size:2.2rem; line-height:1; color:var(--gold);">30</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:.55rem; letter-spacing:.15em; color:var(--steel); text-transform:uppercase;">Sec</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scroll-hint">Choose your tournament <span class="bounce">↓</span></div>
+  </div>
+</section>
+
+<!-- HOF STRIP -->
+<div class="hof-strip">
+  <p>🔥 ALL MATCHES PLAYED ON HALL OF FAME DIFFICULTY · NO EXCEPTIONS · SETTINGS SCREENSHOT REQUIRED WITH EVERY RESULT</p>
+</div>
+
+<!-- ══════════════════ TOURNAMENT CARDS ══════════════════ -->
+<div class="cards-section" id="tournaments">
+  <p class="section-label">Choose Your Tournament</p>
+  <h2 class="section-title">Pick Your Game & Console</h2>
+
+  <div class="cards-grid">
+
+    <!-- 2K26 PS5 -->
+    <a href="nba2k26-ps5-website.html" class="t-card c-cyan">
+      <div class="t-card-body">
+        <div class="t-game">NBA 2K26</div>
+        <div class="t-console">PS5 · Next Gen</div>
+        <div class="t-tourney-name">1st Ever All-Star Team-Up<br>5v5 Player Control Tournament</div>
+        <div class="t-stats">
+          <div class="t-stat"><div class="t-stat-v">16</div><div class="t-stat-l">Teams</div></div>
+          <div class="t-stat"><div class="t-stat-v">$450</div><div class="t-stat-l">Prize</div></div>
+          <div class="t-stat"><div class="t-stat-v">5v5</div><div class="t-stat-l">Format</div></div>
+          <div class="t-stat"><div class="t-stat-v">HOF</div><div class="t-stat-l">Difficulty</div></div>
+        </div>
+      </div>
+      <div class="t-card-footer">
+        <div class="t-prices">
+          <span class="tp tp-team">$50 Team</span>
+          <span class="tp tp-solo">$15 Solo</span>
+        </div>
+        <span class="t-cta">Enter Now →</span>
+      </div>
+    </a>
+
+    <!-- 2K26 PS4 -->
+    <a href="nba2k26-ps4-website.html" class="t-card c-fire">
+      <div class="t-card-body">
+        <div class="t-game">NBA 2K26</div>
+        <div class="t-console">PS4 · Current Gen</div>
+        <div class="t-tourney-name">1st Ever All-Star Team-Up<br>5v5 Player Control Tournament</div>
+        <div class="t-stats">
+          <div class="t-stat"><div class="t-stat-v">16</div><div class="t-stat-l">Teams</div></div>
+          <div class="t-stat"><div class="t-stat-v">$450</div><div class="t-stat-l">Prize</div></div>
+          <div class="t-stat"><div class="t-stat-v">5v5</div><div class="t-stat-l">Format</div></div>
+          <div class="t-stat"><div class="t-stat-v">HOF</div><div class="t-stat-l">Difficulty</div></div>
+        </div>
+      </div>
+      <div class="t-card-footer">
+        <div class="t-prices">
+          <span class="tp tp-team">$50 Team</span>
+          <span class="tp tp-solo">$15 Solo</span>
+        </div>
+        <span class="t-cta">Enter Now →</span>
+      </div>
+    </a>
+
+    <!-- 2K25 PS5 & PS4 — full width -->
+    <a href="nba2k25-ps5-website.html" class="t-card c-purple card-wide">
+      <div class="t-card-body">
+        <div class="t-game">NBA 2K25</div>
+        <div class="t-console">PS5 Next Gen &amp; PS4 Current Gen</div>
+        <div class="t-tourney-name">1st Ever All-Star Team-Up 2K Arena · 5v5 Player Control Tournament · Open to PS5 &amp; PS4 Players</div>
+        <div class="t-stats">
+          <div class="t-stat"><div class="t-stat-v">16</div><div class="t-stat-l">Teams</div></div>
+          <div class="t-stat"><div class="t-stat-v">$450</div><div class="t-stat-l">Prize</div></div>
+          <div class="t-stat"><div class="t-stat-v">5v5</div><div class="t-stat-l">Format</div></div>
+          <div class="t-stat"><div class="t-stat-v">HOF</div><div class="t-stat-l">Difficulty</div></div>
+        </div>
+      </div>
+      <div class="t-card-footer">
+        <div class="t-prices">
+          <span class="tp tp-team">$50 Team</span>
+          <span class="tp tp-solo">$15 Solo</span>
+        </div>
+        <span class="t-cta">Enter Now →</span>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<!-- ══════════════════ HOW IT WORKS ══════════════════ -->
+<div class="hof-strip" style="background:rgba(0,0,0,.3);border-color:var(--ash);">
+  <p style="color:var(--steel);">Join the <strong>All-Star Team-Up 2K Arena</strong> community on Discord (astu_2k_arena) — Private 5v5 Player Control Tournaments on Hall of Fame difficulty. discord.gg/TDvwrybZ2S</p>
+</div>
+
+<div class="how-section">
+  <p class="section-label" style="text-align:center;">How It Works</p>
+  <h2 class="section-title">Simple. Fair. Competitive.</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num" style="color:var(--k26ps5);">01</div>
+      <h4>Pick Your Tournament</h4>
+      <p>Choose your game (2K25 or 2K26) and your console (PS4 or PS5). Each tournament has its own bracket and $450 prize pool ($300 / $100 / $50).</p>
+    </div>
+    <div class="step">
+      <div class="step-num" style="color:var(--k26ps4);">02</div>
+      <h4>Register & Pay</h4>
+      <p>Teams pay $50 for all 5 players. Solo players pay $15 and get placed on a balanced team by skill level. Payment via Stripe — secure and instant.</p>
+    </div>
+    <div class="step">
+      <div class="step-num" style="color:var(--k25ps5);">03</div>
+      <h4>Round Robin First</h4>
+      <p>Every team plays 3 group stage games. Your record earns your seed. Best W-L record = top seed. Tiebreaker is point differential.</p>
+    </div>
+    <div class="step">
+      <div class="step-num" style="color:var(--k25ps4);">04</div>
+      <h4>Double Elimination Bracket</h4>
+      <p>All 16 teams enter the bracket seeded by their group stage record. Lose once → Losers Bracket. Lose twice → eliminated. Grand Finals will be broadcast live on Twitch & YouTube. All other results & standings posted live in Discord.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ FOOTER ══════════════════ -->
+
+<!-- SEASON SCHEDULE STRIP -->
+<div style="background:#0a0a0a;border-top:1px solid #1a1a1a;border-bottom:1px solid #1a1a1a;padding:40px 24px;">
+  <div style="max-width:1100px;margin:0 auto;">
+    <p style="font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:#555;text-align:center;margin-bottom:8px;">3 Seasons · S1 Reg Jul 17–24 · Games Jul 31 · 2026</p>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,5vw,3.5rem);text-align:center;color:#F7F7F7;letter-spacing:.06em;margin-bottom:32px;">Season Schedule</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2px;background:#1a1a1a;border:2px solid #1a1a1a;">
+
+      <!-- Season 1 -->
+      <div style="background:#0e0e0e;padding:32px 28px;border-left:4px solid #FF6B00;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:#FF6B00;margin-bottom:8px;">Season 01</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:#F7F7F7;line-height:1;margin-bottom:4px;">July–August</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.1em;color:#FF6B00;margin-bottom:16px;">2026 · Reg Opens Jul 17 · Deadline Jul 24 · Reg Jul 17–24 · Games Jul 31</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="font-size:.82rem;color:#888;display:flex;gap:8px;align-items:center;"><span style="width:6px;height:6px;border-radius:50%;background:#FF6B00;flex-shrink:0;display:inline-block;"></span>NBA 2K26 PS5 Next Gen</div>
+          <div style="font-size:.82rem;color:#888;display:flex;gap:8px;align-items:center;"><span style="width:6px;height:6px;border-radius:50%;background:#FF6B00;flex-shrink:0;display:inline-block;"></span>NBA 2K26 PS4 Current Gen</div>
+          <div style="font-size:.82rem;color:#888;display:flex;gap:8px;align-items:center;"><span style="width:6px;height:6px;border-radius:50%;background:#FF6B00;flex-shrink:0;display:inline-block;"></span>NBA 2K25 PS5 &amp; PS4</div>
+        </div>
+        <div style="margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,107,0,.6);background:rgba(255,107,0,.08);border:1px solid rgba(255,107,0,.2);padding:5px 12px;border-radius:2px;display:inline-block;">🟢 Registration Opens July 17s July 17</div>
+      </div>
+
+      <!-- Season 2 -->
+      <div style="background:#0e0e0e;padding:32px 28px;border-left:4px solid #A259FF;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:#A259FF;margin-bottom:8px;">Season 02</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:#F7F7F7;line-height:1;margin-bottom:4px;">September</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.1em;color:#555;margin-bottom:16px;">2026 · Dates TBD</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="font-size:.82rem;color:#888;display:flex;gap:8px;align-items:center;"><span style="width:6px;height:6px;border-radius:50%;background:#A259FF;flex-shrink:0;display:inline-block;"></span>NBA 2K26 PS5 Next Gen</div>
+          <div style="font-size:.82rem;color:#888;display:flex;gap:8px;align-items:center;"><span style="width:6px;height:6px;border-radius:50%;background:#A259FF;flex-shrink:0;display:inline-block;"></span>NBA 2K26 PS4 Current Gen</div>
+          <div style="font-size:.82rem;color:#888;display:flex;gap:8px;align-items:center;"><span style="width:6px;height:6px;border-radius:50%;background:#A259FF;flex-shrink:0;display:inline-block;"></span>NBA 2K25 PS5 &amp; PS4</div>
+        </div>
+        <div style="margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:#555;background:#1a1a1a;border:1px solid #2e2e2e;padding:5px 12px;border-radius:2px;display:inline-block;">⏳ Coming Soon</div>
+      </div>
+
+      <!-- Season 3 -->
+      <div style="background:#0e0e0e;padding:32px 28px;border-left:4px solid #00CFFF;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:#00CFFF;margin-bottom:8px;">Season 03</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:#F7F7F7;line-height:1;margin-bottom:4px;">October</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.1em;color:#555;margin-bottom:16px;">2026 · Dates TBD</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="font-size:.82rem;color:#888;display:flex;gap:8px;align-items:center;"><span style="width:6px;height:6px;border-radius:50%;background:#00CFFF;flex-shrink:0;display:inline-block;"></span>NBA 2K26 PS5 Next Gen</div>
+          <div style="font-size:.82rem;color:#888;display:flex;gap:8px;align-items:center;"><span style="width:6px;height:6px;border-radius:50%;background:#00CFFF;flex-shrink:0;display:inline-block;"></span>NBA 2K26 PS4 Current Gen</div>
+          <div style="font-size:.82rem;color:#888;display:flex;gap:8px;align-items:center;"><span style="width:6px;height:6px;border-radius:50%;background:#00CFFF;flex-shrink:0;display:inline-block;"></span>NBA 2K25 PS5 &amp; PS4</div>
+        </div>
+        <div style="margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:#555;background:#1a1a1a;border:1px solid #2e2e2e;padding:5px 12px;border-radius:2px;display:inline-block;">⏳ Coming Soon</div>
+      </div>
+
+    </div>
+
+    <!-- Season totals -->
+    <div style="margin-top:24px;background:#0e0e0e;border:1px solid #1a1a1a;border-left:4px solid #F5C518;padding:20px 28px;border-radius:2px;display:flex;gap:32px;flex-wrap:wrap;align-items:center;">
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;color:#555;margin-bottom:3px;">Total Tournaments</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:#F5C518;">9</div>
+      </div>
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;color:#555;margin-bottom:3px;">Total Prize Money</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:#F5C518;">$4,050</div>
+      </div>
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;color:#555;margin-bottom:3px;">Teams Per Season</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:#F5C518;">48 Max</div>
+      </div>
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;color:#555;margin-bottom:3px;">Entry Fee</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:#F5C518;">$50 / $15</div>
+      </div>
+      <div style="margin-left:auto;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;color:#555;margin-bottom:3px;">Join Now</div>
+        <a href="https://discord.gg/TDvwrybZ2S" target="_blank" style="background:#F5C518;color:#000;font-family:'Inter',sans-serif;font-weight:700;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;padding:10px 22px;border-radius:3px;text-decoration:none;display:inline-block;">discord.gg/TDvwrybZ2S →</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="footer-brand">🏀 NBA ALL-STAR TEAM-UP ARENA TOURNAMENTS</div>
+  <div class="footer-links">
+    <a href="nba2k26-ps5-website.html">2K26 PS5</a>
+    <a href="nba2k26-ps4-website.html">2K26 PS4</a>
+    <a href="nba2k25-ps5-website.html">2K25 PS5 &amp; PS4</a>
+    <a href="https://discord.gg/TDvwrybZ2S" target="_blank">Discord</a>
+    <a href="https://buy.stripe.com/3cI6oH1ol6zA4lkcY4efC0b" target="_blank">Register Team $50</a>
+    <a href="https://buy.stripe.com/3cIbJ11olcXY7xwf6cefC0a" target="_blank">Register Solo $15</a>
+  </div>
+  <p class="footer-copy">© 2026 NBA All-Star Team-Up 2K Arena Tournaments · Organized by Elijah Martinez · @all_star_team_up · Not affiliated with 2K Sports or the NBA</p>
+</footer>
+
+<script>
+  // Countdown Timer - Registration Opens July 17, 2026
+  function updateCountdown() {
+    const targetDate = new Date("2026-07-17T00:00:00-04:00").getTime(); // ET timezone
+    const now = new Date().getTime();
+    const distance = targetDate - now;
+
+    if (distance < 0) {
+      document.getElementById("countdown").innerHTML = 
+        '<div style="font-family:\'JetBrains Mono\',monospace; font-size:.75rem; color:var(--gold); text-transform:uppercase; letter-spacing:.15em;">Registration is Now Open!</div>';
+      return;
+    }
+
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    document.getElementById("days").innerText = String(days).padStart(2, '0');
+    document.getElementById("hours").innerText = String(hours).padStart(2, '0');
+    document.getElementById("minutes").innerText = String(minutes).padStart(2, '0');
+    document.getElementById("seconds").innerText = String(seconds).padStart(2, '0');
+  }
+
+  // Update every second
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+</script>
+
+</body>
+</html>

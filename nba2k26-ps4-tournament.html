@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All-Star Team-Up 2K Arena | Private 5v5 Player Control Tournaments</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Anton&family=Barlow+Condensed:ital,wght@0,700;0,900;1,900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+
+:root {
+  --fire:   #FF6B00;
+  --gold:   #F5C518;
+  --blue:   #0060FF;
+  --cyan:   #FF9500;
+  --ink:    #070707;
+  --smoke:  #111;
+  --ash:    #1e1e1e;
+  --steel:  #555;
+  --mid:    #888;
+  --white:  #F8F8F8;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--ink);color:var(--white);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+/* ── ACK BANNER ── */
+.ack{position:sticky;top:0;z-index:300;background:linear-gradient(90deg,#0d0800,#001230,#0d0800);border-bottom:1px solid rgba(245,197,24,.3);padding:10px 24px;display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;text-align:center;}
+.ack p{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.1em;color:rgba(245,197,24,.8);}
+.ack button{background:var(--gold);color:#000;border:none;padding:5px 16px;font-weight:700;font-size:.75rem;letter-spacing:.05em;text-transform:uppercase;border-radius:2px;cursor:pointer;}
+.ack.gone{display:none;}
+
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:200;background:rgba(7,7,7,.97);border-bottom:1px solid var(--ash);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:60px;gap:16px;flex-wrap:wrap;backdrop-filter:blur(12px);}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.1em;background:linear-gradient(90deg,var(--fire),var(--gold),#FF9500);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;white-space:nowrap;}
+.nav-links{display:flex;gap:0;list-style:none;}
+.nav-links a{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:var(--steel);text-decoration:none;padding:8px 14px;transition:color .15s;}
+.nav-links a:hover{color:var(--gold);}
+.nav-cta{background:var(--gold);color:#000;font-weight:700;font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;padding:8px 18px;border-radius:2px;text-decoration:none;transition:opacity .15s;white-space:nowrap;}
+.nav-cta:hover{opacity:.85;}
+
+/* ── HERO ── */
+.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 24px 80px;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;background:
+  radial-gradient(ellipse 90% $200 at 20% 50%,  rgba(255,107,0,.12) 0%,transparent 55%),
+  radial-gradient(ellipse 80% $200 at 80% 40%,  rgba(200,80,0,.14)  0%,transparent 55%),
+  radial-gradient(ellipse $200 50% at 50% 100%, rgba(245,197,24,.1)  0%,transparent 50%),
+  var(--ink);}
+.hero-grid{position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 59px,rgba(255,255,255,.03) 60px),repeating-linear-gradient(90deg,transparent,transparent 59px,rgba(255,255,255,.03) 60px);pointer-events:none;}
+
+/* court lines */
+.hero-arc{position:absolute;bottom:-40px;left:50%;transform:translateX(-50%);width:700px;height:380px;border:1.5px solid rgba(245,197,24,.08);border-radius:50% 50% 0 0;border-bottom:none;}
+.hero-arc2{position:absolute;bottom:-40px;left:50%;transform:translateX(-50%);width:440px;height:240px;border:1.5px solid rgba(245,197,24,.05);border-radius:50% 50% 0 0;border-bottom:none;}
+
+.hero-content{position:relative;z-index:10;}
+.hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:20px;display:inline-block;border:1px solid rgba(245,197,24,.3);padding:5px 20px;border-radius:2px;background:rgba(245,197,24,.05);}
+.hero-pre{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-style:italic;font-size:clamp(1.4rem,4vw,2.4rem);text-transform:uppercase;color:var(--fire);letter-spacing:.04em;margin-bottom:4px;}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(3.8rem,14vw,9rem);line-height:.86;letter-spacing:.03em;margin-bottom:8px;}
+.hero-title .t1{color:var(--white);display:block;}
+.hero-title .t2{background:linear-gradient(90deg,var(--fire),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;}
+.hero-title .t3{color:#FF9500;display:block;text-shadow:0 0 40px rgba(255,149,0,.3);}
+.hero-sub{font-size:clamp(.9rem,2vw,1.1rem);color:var(--mid);max-width:520px;margin:20px auto 40px;}
+
+.hero-badges{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:40px;}
+.hbadge{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.1em;padding:5px 14px;border-radius:2px;text-transform:uppercase;}
+.hbadge.fire{border:1px solid rgba(255,107,0,.4);color:var(--fire);background:rgba(255,107,0,.06);}
+.hbadge.gold{border:1px solid rgba(245,197,24,.4);color:var(--gold);background:rgba(245,197,24,.06);}
+.hbadge.blue{border:1px solid rgba(255,149,0,.35);color:#FF9500;background:rgba(255,149,0,.06);}
+
+.cta-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
+.btn{display:inline-block;padding:14px 30px;font-weight:700;font-size:.86rem;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;border-radius:3px;border:none;cursor:pointer;transition:transform .15s,box-shadow .15s,opacity .15s;}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.4);}
+.btn-fire{background:var(--fire);color:#000;}
+.btn-gold{background:var(--gold);color:#000;}
+.btn-outline-gold{background:transparent;color:var(--gold);border:2px solid var(--gold);}
+.btn-outline-cyan{background:transparent;color:#FF9500;border:2px solid rgba(255,149,0,.5);}
+.btn-blue{background:var(--blue);color:#fff;}
+
+.hero-scroll{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;}
+.hero-scroll span{font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.2em;color:var(--steel);text-transform:uppercase;}
+.scroll-dot{width:4px;height:20px;border:1px solid var(--steel);border-radius:100px;position:relative;overflow:hidden;}
+.scroll-dot::after{content:'';position:absolute;top:2px;left:50%;transform:translateX(-50%);width:2px;height:6px;background:var(--gold);border-radius:100px;animation:scrollDown 1.6s infinite;}
+@keyframes scrollDown{0%{top:2px;opacity:1}100%{top:14px;opacity:0}}
+
+/* ── SHARED SECTION STYLES ── */
+.section{padding:88px 24px;max-width:1100px;margin:0 auto;}
+.section-full{padding:88px 24px;}
+.sl{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.28em;text-transform:uppercase;margin-bottom:8px;}
+.sl.fire{color:var(--fire);}
+.sl.gold{color:var(--gold);}
+.sl.blue{color:#FF9500;}
+.st{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.6rem,6vw,5rem);line-height:.92;margin-bottom:40px;}
+hr.div{border:none;border-top:1px solid var(--ash);margin:0;}
+
+/* ── ABOUT / STATS STRIP ── */
+.stats-strip{background:var(--smoke);border-top:2px solid var(--ash);border-bottom:2px solid var(--ash);}
+.stats-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0;}
+.stat-block{padding:36px 24px;text-align:center;border-right:1px solid var(--ash);}
+.stat-block:last-child{border-right:none;}
+.stat-val{font-family:'Bebas Neue',sans-serif;font-size:3rem;line-height:1;margin-bottom:4px;}
+.stat-val.fire{color:var(--fire);}
+.stat-val.gold{color:var(--gold);}
+.stat-val.blue{color:#FF9500;}
+.stat-val.white{color:var(--white);}
+.stat-lbl{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.16em;color:var(--steel);text-transform:uppercase;}
+
+/* ── ABOUT ── */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;}
+@media(max-width:680px){.about-grid{grid-template-columns:1fr;}}
+.about-text p{font-size:.95rem;color:var(--mid);line-height:1.8;margin-bottom:16px;}
+.about-text p strong{color:var(--white);}
+.about-cards{display:flex;flex-direction:column;gap:12px;}
+.about-card{background:var(--smoke);border:1px solid var(--ash);padding:20px 22px;border-radius:3px;display:flex;gap:16px;align-items:flex-start;transition:border-color .2s;}
+.about-card:hover{border-color:var(--gold);}
+.about-card-icon{font-size:1.6rem;flex-shrink:0;margin-top:2px;}
+.about-card h4{font-size:.88rem;font-weight:700;color:var(--white);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em;}
+.about-card p{font-size:.82rem;color:var(--steel);}
+
+/* ── REGISTRATION ── */
+.reg-section{background:linear-gradient(180deg,var(--ink),#040d1a,var(--ink));}
+.reg-inner{max-width:1100px;margin:0 auto;padding:88px 24px;}
+.reg-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:40px;}
+@media(max-width:640px){.reg-grid{grid-template-columns:1fr;}}
+
+.reg-card{background:var(--smoke);border:2px solid var(--ash);border-radius:4px;padding:36px 30px;position:relative;transition:border-color .2s;}
+.reg-card:hover{border-color:rgba(245,197,24,.4);}
+.reg-card.featured{border-color:var(--gold);background:linear-gradient(135deg,#0f0c00,var(--smoke));}
+.reg-pill{position:absolute;top:-1px;right:22px;background:var(--gold);color:#000;font-family:'JetBrains Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:0 0 6px 6px;}
+.reg-type{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.22em;color:var(--steel);text-transform:uppercase;margin-bottom:8px;}
+.reg-price{font-family:'Bebas Neue',sans-serif;font-size:5rem;line-height:1;color:var(--gold);margin-bottom:4px;}
+.reg-price sup{font-size:2.2rem;vertical-align:super;}
+.reg-note{font-size:.78rem;color:var(--steel);margin-bottom:20px;}
+.reg-card h3{font-size:1.1rem;font-weight:700;color:var(--white);margin-bottom:14px;}
+.reg-feats{list-style:none;margin-bottom:28px;}
+.reg-feats li{font-size:.84rem;color:var(--steel);padding:8px 0;border-bottom:1px solid var(--ash);display:flex;gap:10px;align-items:flex-start;}
+.reg-feats li:last-child{border-bottom:none;}
+.reg-feats .ck{color:#7fbb7f;flex-shrink:0;margin-top:2px;}
+.reg-feats .cx{color:var(--fire);flex-shrink:0;margin-top:2px;}
+
+.solo-box{background:rgba(200,80,0,.06);border:1px solid rgba(255,149,0,.2);border-left:4px solid #FF9500;padding:24px 28px;border-radius:2px;margin-bottom:40px;}
+.solo-box h3{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:#FF9500;margin-bottom:10px;}
+.solo-box p{font-size:.86rem;color:var(--steel);line-height:1.7;margin-bottom:10px;}
+.solo-steps{display:flex;flex-direction:column;gap:10px;margin-top:12px;}
+.solo-step{display:flex;gap:14px;align-items:flex-start;font-size:.84rem;color:var(--steel);}
+.solo-step .n{font-family:'JetBrains Mono',monospace;font-size:.64rem;color:#FF9500;background:rgba(255,149,0,.1);padding:3px 10px;border-radius:2px;white-space:nowrap;margin-top:2px;}
+
+.prize-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+@media(max-width:500px){.prize-row{grid-template-columns:1fr;}}
+.prize-card{background:var(--smoke);border:1px solid var(--ash);padding:24px;text-align:center;border-radius:3px;}
+.prize-card.first{border-color:rgba(245,197,24,.4);background:linear-gradient(135deg,#0f0c00,var(--smoke));}
+.prize-place{font-size:1.6rem;margin-bottom:8px;}
+.prize-amount{font-family:'Bebas Neue',sans-serif;font-size:2.6rem;line-height:1;color:var(--gold);}
+.prize-label{font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.12em;color:var(--steel);text-transform:uppercase;margin-top:3px;}
+
+/* ── RULES ── */
+.rules-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2px;background:var(--ash);border:2px solid var(--ash);margin-bottom:40px;}
+.rule-card{background:var(--smoke);padding:26px;transition:background .2s;}
+.rule-card:hover{background:#181818;}
+.rule-num{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;opacity:.18;line-height:1;margin-bottom:4px;}
+.rule-card.f .rule-num{color:var(--fire);}
+.rule-card.g .rule-num{color:var(--gold);}
+.rule-card.b .rule-num{color:#FF9500;}
+.rule-card.danger{border-left:3px solid var(--fire);background:rgba(255,107,0,.04);}
+.rule-card.notice{border-left:3px solid var(--gold);background:rgba(245,197,24,.03);}
+.rule-card h3{font-size:.88rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px;color:var(--white);}
+.rule-card p{font-size:.83rem;color:var(--steel);line-height:1.65;}
+
+.seed-box{background:var(--smoke);border:1px solid var(--ash);border-left:4px solid var(--gold);padding:28px 30px;border-radius:2px;margin-top:32px;}
+.seed-box h3{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--gold);margin-bottom:12px;}
+.seed-box p{font-size:.86rem;color:var(--steel);line-height:1.7;}
+.seed-steps{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+.seed-step{display:flex;gap:14px;font-size:.84rem;color:var(--steel);}
+.seed-step .n{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--gold);background:rgba(245,197,24,.09);padding:3px 10px;border-radius:2px;white-space:nowrap;margin-top:2px;}
+
+/* ── SCHEDULE ── */
+.schedule-section{background:var(--smoke);}
+.sched-inner{max-width:1100px;margin:0 auto;padding:88px 24px;}
+.sched-table{width:100%;border-collapse:collapse;font-size:.84rem;}
+.sched-table th{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);padding:12px 16px;text-align:left;border-bottom:2px solid var(--gold);background:rgba(245,197,24,.04);}
+.sched-table td{padding:14px 16px;border-bottom:1px solid var(--ash);color:var(--steel);vertical-align:middle;}
+.sched-table tr:hover td{background:rgba(255,255,255,.02);color:var(--white);}
+.status{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.08em;padding:4px 10px;border-radius:100px;text-transform:uppercase;display:inline-block;white-space:nowrap;}
+.s-done{background:rgba(127,187,127,.1);color:#7fbb7f;}
+.s-live{background:rgba(255,107,0,.15);color:var(--fire);animation:glow 1.4s infinite;}
+.s-up  {background:rgba(245,197,24,.1);color:var(--gold);}
+.s-tbd {background:var(--ash);color:var(--steel);}
+@keyframes glow{0%,100%{opacity:1}50%{opacity:.55}}
+
+/* ── BRACKET ── */
+.bracket-wrap{overflow-x:auto;padding-bottom:16px;}
+.bracket{display:flex;min-width:720px;}
+.round{display:flex;flex-direction:column;flex:1;}
+.round-lbl{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;text-align:center;padding:10px 0;border-bottom:1px solid var(--ash);margin-bottom:18px;}
+.matches{display:flex;flex-direction:column;justify-content:space-around;flex:1;gap:8px;}
+.match{background:var(--smoke);border:1px solid var(--ash);border-radius:3px;overflow:hidden;margin:4px 8px;transition:border-color .2s;}
+.match:hover{border-color:var(--gold);}
+.team{padding:10px 14px;font-size:.8rem;font-weight:600;display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid var(--ash);}
+.team:last-child{border-bottom:none;}
+.team.win{color:var(--gold);background:rgba(245,197,24,.05);}
+.team.tbd{color:var(--steel);font-style:italic;}
+.tscore{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;min-width:18px;text-align:right;}
+.champ-box{background:linear-gradient(135deg,#0f0c00,var(--smoke));border:2px solid var(--gold);border-radius:4px;padding:28px;text-align:center;margin:4px 8px;}
+.champ-box .clbl{font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:8px;}
+.champ-box .cname{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--gold);}
+.champ-trophy{font-size:2.4rem;margin-bottom:8px;}
+
+/* ── STAFF ── */
+.staff-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2px;background:var(--ash);border:2px solid var(--ash);margin-bottom:32px;}
+.staff-card{background:var(--smoke);padding:28px;transition:background .2s;}
+.staff-card:hover{background:#181818;}
+.staff-av{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:14px;}
+.staff-av.fire{background:linear-gradient(135deg,var(--fire),#a03000);}
+.staff-av.gold{background:linear-gradient(135deg,var(--gold),#a07800);}
+.staff-av.blue{background:linear-gradient(135deg,var(--blue),#003a99);}
+.staff-av.cyan{background:linear-gradient(135deg,#FF9500,#007099);}
+.staff-role{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;margin-bottom:4px;}
+.staff-role.fire{color:var(--fire);}
+.staff-role.gold{color:var(--gold);}
+.staff-role.blue{color:#FF9500;}
+.staff-card h3{font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:6px;}
+.staff-card p{font-size:.8rem;color:var(--steel);}
+.chips{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+.chip{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.06em;padding:3px 10px;background:var(--ash);border-radius:100px;color:var(--white);text-decoration:none;transition:background .15s;}
+.chip:hover{background:#2e2e2e;}
+
+.contact-box{background:var(--smoke);border:1px solid var(--ash);border-left:4px solid var(--gold);padding:28px 32px;border-radius:2px;}
+.contact-box h3{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);margin-bottom:8px;}
+.contact-box p{font-size:.86rem;color:var(--steel);margin-bottom:18px;line-height:1.7;}
+.contact-btns{display:flex;gap:12px;flex-wrap:wrap;}
+
+/* ── FINAL CTA ── */
+.cta-section{
+  position:relative;overflow:hidden;padding:100px 24px;text-align:center;
+  background:linear-gradient(135deg,#0d0400,#000820,#0d0400);
+  border-top:1px solid var(--ash);
+}
+.cta-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% $200 at 30% 50%,rgba(255,107,0,.1) 0%,transparent 55%),radial-gradient(ellipse 70% $200 at 70% 50%,rgba(200,80,0,.1) 0%,transparent 55%),radial-gradient(ellipse $200 $200 at 50% 80%,rgba(245,197,24,.07) 0%,transparent 55%);}
+.cta-inner{position:relative;z-index:10;}
+.cta-crown{font-size:3rem;margin-bottom:16px;filter:drop-shadow(0 0 24px rgba(245,197,24,.8));}
+.cta-eyebrow{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:14px;}
+.cta-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,10vw,7rem);line-height:.88;letter-spacing:.04em;margin-bottom:16px;}
+.cta-title .fire{color:var(--fire);}
+.cta-title .gold{background:linear-gradient(90deg,var(--gold),#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.cta-title .blue{color:#FF9500;}
+.cta-sub{font-size:.95rem;color:var(--mid);max-width:480px;margin:0 auto 36px;}
+.cta-capacity{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.12em;color:var(--fire);text-transform:uppercase;margin-bottom:24px;}
+.cap-bar{width:280px;height:8px;background:var(--ash);border-radius:100px;overflow:hidden;margin:8px auto 0;}
+.cap-fill{height:100%;background:linear-gradient(90deg,var(--fire),var(--gold));border-radius:100px;width:19%;}
+
+/* ── FOOTER ── */
+footer{background:var(--ink);border-top:1px solid var(--ash);padding:32px 24px;}
+.footer-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+.footer-brand{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.1em;background:linear-gradient(90deg,var(--fire),var(--gold),#FF9500);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.footer-links{display:flex;gap:20px;flex-wrap:wrap;}
+.footer-links a{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.12em;color:var(--steel);text-decoration:none;text-transform:uppercase;transition:color .15s;}
+.footer-links a:hover{color:var(--gold);}
+.footer-copy{font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.1em;color:var(--ash);text-transform:uppercase;width:100%;text-align:center;margin-top:16px;}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.hero-content > *{animation:fadeUp .7s ease both;}
+.hero-content > *:nth-child(1){animation-delay:.1s}
+.hero-content > *:nth-child(2){animation-delay:.2s}
+.hero-content > *:nth-child(3){animation-delay:.3s}
+.hero-content > *:nth-child(4){animation-delay:.4s}
+.hero-content > *:nth-child(5){animation-delay:.5s}
+.hero-content > *:nth-child(6){animation-delay:.6s}
+
+/* ── SIGNUP FORM SECTION ── */
+.signup-section{background:linear-gradient(180deg,var(--ink),#040d1a,var(--ink));padding:88px 24px;}
+.signup-inner{max-width:1100px;margin:0 auto;}
+.signup-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;}
+@media(max-width:760px){.signup-grid{grid-template-columns:1fr;}}
+
+/* form */
+.sform{background:var(--smoke);border:1px solid var(--ash);border-radius:4px;padding:36px 32px;}
+.sform h3{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--white);letter-spacing:.06em;margin-bottom:4px;}
+.sform .fsub{font-size:.82rem;color:var(--steel);margin-bottom:28px;}
+
+.field-group{display:flex;flex-direction:column;gap:6px;margin-bottom:20px;}
+.field-group label{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--mid);}
+.field-group input,
+.field-group select,
+.field-group textarea{background:#f8f9fa;border:1px solid #d1d5db;color:#111111;font-family:'Inter',sans-serif;font-size:.88rem;padding:11px 14px;border-radius:3px;outline:none;width:100%;transition:border-color .2s;}
+.field-group input:focus,
+.field-group select:focus,
+.field-group textarea:focus{border-color:var(--gold);}
+.field-group select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23333' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;}
+.field-group select option{background:#ffffff; color:#111111;}
+.field-group textarea{resize:vertical;min-height:80px;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:500px){.field-row{grid-template-columns:1fr;}}
+
+/* type toggle */
+.type-toggle{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:24px;border:1px solid var(--ash);border-radius:3px;overflow:hidden;}
+.type-btn{padding:12px;text-align:center;cursor:pointer;border:none;background:transparent;color:var(--steel);font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;transition:all .2s;}
+.type-btn.active{background:var(--gold);color:#000;font-weight:700;}
+.type-btn:first-child{border-right:1px solid var(--ash);}
+
+/* team fields toggling */
+.team-fields{display:none;}
+.team-fields.visible{display:block;}
+.solo-note{background:rgba(255,149,0,.06);border:1px solid rgba(255,149,0,.18);border-radius:3px;padding:14px 16px;margin-bottom:20px;font-size:.82rem;color:rgba(255,149,0,.8);display:flex;gap:10px;align-items:flex-start;}
+.solo-note-icon{font-size:1rem;flex-shrink:0;}
+
+.agree-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:24px;}
+.agree-row input[type=checkbox]{margin-top:4px;accent-color:var(--gold);width:16px;height:16px;flex-shrink:0;cursor:pointer;}
+.agree-row label{font-size:.8rem;color:var(--steel);cursor:pointer;}
+.agree-row label a{color:var(--gold);text-decoration:none;}
+
+.btn-submit{width:100%;padding:15px;background:var(--gold);color:#000;font-weight:700;font-size:.9rem;letter-spacing:.08em;text-transform:uppercase;border:none;border-radius:3px;cursor:pointer;transition:opacity .2s,transform .15s;font-family:'Inter',sans-serif;}
+.btn-submit:hover{opacity:.88;transform:translateY(-1px);}
+.btn-submit:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+
+/* success state */
+.form-success{display:none;text-align:center;padding:40px 20px;}
+.form-success.visible{display:block;}
+.success-icon{font-size:3rem;margin-bottom:16px;}
+.success-title{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--gold);letter-spacing:.06em;margin-bottom:8px;}
+.success-msg{font-size:.88rem;color:var(--steel);line-height:1.7;}
+.success-team{background:rgba(245,197,24,.08);border:1px solid rgba(245,197,24,.25);border-radius:3px;padding:16px 20px;margin:20px 0;text-align:left;}
+.success-team h4{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+.team-members{list-style:none;display:flex;flex-direction:column;gap:6px;}
+.team-member{font-size:.84rem;color:var(--mid);display:flex;align-items:center;gap:8px;}
+.team-member .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0;}
+.team-member.you{color:var(--white);font-weight:600;}
+
+/* right panel — live roster board */
+.roster-board{display:flex;flex-direction:column;gap:16px;}
+.roster-board-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--white);letter-spacing:.06em;margin-bottom:4px;}
+.roster-board-sub{font-size:.8rem;color:var(--steel);margin-bottom:8px;}
+
+.team-slot{background:var(--smoke);border:1px solid var(--ash);border-radius:4px;overflow:hidden;transition:border-color .3s;}
+.team-slot.open{border-color:rgba(255,149,0,.25);}
+.team-slot.full{border-color:rgba(127,187,127,.3);}
+.slot-header{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--ash);}
+.slot-name{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.06em;color:var(--white);}
+.slot-status{font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:100px;}
+.slot-status.open{background:rgba(255,149,0,.1);color:#FF9500;}
+.slot-status.full{background:rgba(127,187,127,.1);color:#7fbb7f;}
+.slot-members{padding:8px 16px 12px;}
+.slot-member{display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.82rem;}
+.slot-member:last-child{border-bottom:none;}
+.slot-member .av{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--fire),var(--gold));display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#000;flex-shrink:0;}
+.slot-member .av.empty{background:var(--ash);color:var(--steel);}
+.slot-member .mn{color:var(--mid);}
+.slot-member .mn.filled{color:var(--white);}
+.slot-member .mn.you-label{color:var(--gold);font-weight:600;}
+.slot-member .pos{font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.1em;color:var(--steel);margin-left:auto;}
+.skill-bar-wrap{padding:8px 16px 12px;border-top:1px solid var(--ash);}
+.skill-bar-label{font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.12em;color:var(--steel);text-transform:uppercase;margin-bottom:5px;display:flex;justify-content:space-between;}
+.skill-bar{height:4px;background:var(--ash);border-radius:100px;overflow:hidden;}
+.skill-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,#FF9500,var(--blue));}
+
+.cap-summary{background:var(--smoke);border:1px solid var(--ash);border-radius:3px;padding:16px 18px;}
+.cap-summary h4{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+.cap-row2{display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:6px;}
+.cap-row2 span:first-child{color:var(--steel);}
+.cap-row2 span:last-child{font-family:'JetBrains Mono',monospace;color:var(--white);}
+.cap-bar2{height:6px;background:var(--ash);border-radius:100px;overflow:hidden;margin-top:10px;}
+.cap-fill2{height:100%;background:linear-gradient(90deg,var(--fire),var(--gold));border-radius:100px;transition:width .5s ease;}
+
+/* ── SIGNUP FORM SECTION ── */
+.signup-section{background:linear-gradient(180deg,var(--ink),#040d1a,var(--ink));padding:88px 24px;}
+.signup-inner{max-width:1100px;margin:0 auto;}
+.signup-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;}
+@media(max-width:760px){.signup-grid{grid-template-columns:1fr;}}
+.sform{background:var(--smoke);border:1px solid var(--ash);border-radius:4px;padding:36px 32px;}
+.sform h3{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--white);letter-spacing:.06em;margin-bottom:4px;}
+.sform .fsub{font-size:.82rem;color:var(--steel);margin-bottom:28px;}
+.field-group{display:flex;flex-direction:column;gap:6px;margin-bottom:20px;}
+.field-group label{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--mid);}
+.field-group input,.field-group select,.field-group textarea{background:#f8f9fa;border:1px solid #d1d5db;color:#111111;font-family:'Inter',sans-serif;font-size:.88rem;padding:11px 14px;border-radius:3px;outline:none;width:100%;transition:border-color .2s;}
+.field-group input:focus,.field-group select:focus,.field-group textarea:focus{border-color:var(--gold);}
+.field-group select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23333' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;}
+.field-group select option{background:#ffffff; color:#111111;}
+.field-group textarea{resize:vertical;min-height:80px;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:500px){.field-row{grid-template-columns:1fr;}}
+.type-toggle{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:20px;border:1px solid var(--ash);border-radius:3px;overflow:hidden;}
+.type-btn{padding:12px;text-align:center;cursor:pointer;border:none;background:transparent;color:var(--steel);font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;transition:all .2s;}
+.type-btn.active{background:var(--gold);color:#000;font-weight:700;}
+.type-btn:first-child{border-right:1px solid var(--ash);}
+.team-fields{display:none;}
+.team-fields.visible{display:block;}
+.solo-note{background:rgba(255,149,0,.06);border:1px solid rgba(255,149,0,.18);border-radius:3px;padding:14px 16px;margin-bottom:20px;font-size:.82rem;color:rgba(255,149,0,.85);display:flex;gap:10px;align-items:flex-start;}
+.agree-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:24px;}
+.agree-row input[type=checkbox]{margin-top:4px;accent-color:var(--gold);width:16px;height:16px;flex-shrink:0;cursor:pointer;}
+.agree-row label{font-size:.8rem;color:var(--steel);cursor:pointer;line-height:1.6;}
+.agree-row label a{color:var(--gold);text-decoration:none;}
+.btn-submit{width:100%;padding:15px;background:var(--gold);color:#000;font-weight:700;font-size:.9rem;letter-spacing:.08em;text-transform:uppercase;border:none;border-radius:3px;cursor:pointer;transition:opacity .2s,transform .15s;font-family:'Inter',sans-serif;}
+.btn-submit:hover{opacity:.88;transform:translateY(-1px);}
+.form-success{display:none;text-align:center;padding:40px 20px;}
+.form-success.visible{display:block;}
+.success-icon{font-size:3rem;margin-bottom:16px;}
+.success-title{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--gold);letter-spacing:.06em;margin-bottom:8px;}
+.success-msg{font-size:.88rem;color:var(--steel);line-height:1.7;}
+.success-team{background:rgba(245,197,24,.08);border:1px solid rgba(245,197,24,.25);border-radius:3px;padding:16px 20px;margin:20px 0;text-align:left;}
+.success-team h4{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+.team-members{list-style:none;display:flex;flex-direction:column;gap:6px;}
+.team-member{font-size:.84rem;color:var(--mid);display:flex;align-items:center;gap:8px;}
+.team-member .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0;}
+.team-member.you{color:var(--white);font-weight:600;}
+.roster-board{display:flex;flex-direction:column;gap:16px;}
+.roster-board-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--white);letter-spacing:.06em;margin-bottom:2px;}
+.roster-board-sub{font-size:.8rem;color:var(--steel);margin-bottom:4px;}
+.team-slot{background:var(--smoke);border:1px solid var(--ash);border-radius:4px;overflow:hidden;transition:border-color .3s;}
+.team-slot.open{border-color:rgba(255,149,0,.25);}
+.team-slot.full{border-color:rgba(127,187,127,.3);}
+.slot-header{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--ash);}
+.slot-name{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.06em;color:var(--white);}
+.slot-status{font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:100px;}
+.slot-status.open{background:rgba(255,149,0,.1);color:#FF9500;}
+.slot-status.full{background:rgba(127,187,127,.1);color:#7fbb7f;}
+.slot-members{padding:8px 16px 12px;}
+.slot-member{display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.82rem;}
+.slot-member:last-child{border-bottom:none;}
+.slot-member .av{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--fire),var(--gold));display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:#000;flex-shrink:0;}
+.slot-member .av.empty{background:var(--ash);color:var(--steel);}
+.slot-member .mn{color:var(--mid);}
+.slot-member .mn.filled{color:var(--white);}
+.slot-member .mn.you-label{color:var(--gold);font-weight:600;}
+.slot-member .pos{font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.1em;color:var(--steel);margin-left:auto;}
+.skill-bar-wrap{padding:8px 16px 12px;border-top:1px solid var(--ash);}
+.skill-bar-label{font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.12em;color:var(--steel);text-transform:uppercase;margin-bottom:5px;display:flex;justify-content:space-between;}
+.skill-bar{height:4px;background:var(--ash);border-radius:100px;overflow:hidden;}
+.skill-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,#FF9500,var(--blue));}
+.cap-summary{background:var(--smoke);border:1px solid var(--ash);border-radius:3px;padding:16px 18px;}
+.cap-summary h4{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+.cap-row2{display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:6px;}
+.cap-row2 span:first-child{color:var(--steel);}
+.cap-row2 span:last-child{font-family:'JetBrains Mono',monospace;color:var(--white);}
+.cap-bar2{height:6px;background:var(--ash);border-radius:100px;overflow:hidden;margin-top:10px;}
+.cap-fill2{height:100%;background:linear-gradient(90deg,var(--fire),var(--gold));border-radius:100px;transition:width .5s ease;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:760px){
+  nav{padding:0 16px;height:auto;padding-top:10px;padding-bottom:10px;}
+  .nav-links{display:none;}
+  .cta-row,.contact-btns{flex-direction:column;align-items:center;}
+  .btn{width:100%;max-width:300px;text-align:center;}
+  .stats-inner{grid-template-columns:1fr 1fr;}
+  .stat-block{border-right:none;border-bottom:1px solid var(--ash);}
+}
+</style>
+</head>
+<body>
+
+<!-- ACK BANNER -->
+<div class="ack" id="ack">
+  <p>📋 All registered players are bound by the Official Rules. Please read before signing up.</p>
+  <button onclick="document.getElementById('ack').classList.add('gone')">Got It</button>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-brand">⚡ All-Star Team-Up 2K Arena · PS4</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#register">Register</a></li>
+    <li><a href="#rules">Rules</a></li>
+    <li><a href="#schedule">Schedule</a></li>
+    <li><a href="#bracket">Bracket</a></li>
+    <li><a href="#staff">Staff</a></li>
+    <li><a href="#signup">Sign Up</a></li>
+  </ul>
+  <a href="#register" class="nav-cta">Sign Up →</a>
+</nav>
+
+<!-- ══════════════════ HERO ══════════════════ -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-arc"></div>
+  <div class="hero-arc2"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">🏀 Season 1 · July–August 2026 · Reg Jul 17–24 · Games Jul 31 · PS4 · Season 1</div>
+    <div class="hero-pre">NBA 2K26 · PS4 Current Gen</div>
+    <h1 class="hero-title">
+      <span class="t1">ALL-STAR</span>
+      <span class="t2">TEAM UP</span>
+      <span class="t3">5v5 TOURNAMENT</span>
+    </h1>
+    <p class="hero-sub">16 teams. 160 players. $450 prize pool ($300 / $100 / $50). Round Robin group stage into a full Double Elimination bracket. Register as a squad or go solo — we'll build your team.</p>
+    <div class="hero-badges">
+      <span class="hbadge fire">🔥 $450 Prize Pool</span>
+      <span class="hbadge gold">👑 16 Teams Max</span>
+      <span class="hbadge blue">⚡ 5v5 Format</span>
+      <span class="hbadge gold">🔄 Double Elimination</span>
+      <span class="hbadge fire">📊 Round Robin Seeding</span>
+      <span class="hbadge gold">🎮 PS4 Current Gen Only</span>
+      <span class="hbadge gold">🎟 $50 Team · $15 Solo</span>
+      <span class="hbadge blue">📅 Finals TBD — August</span>
+      <span class="hbadge fire">🔥 HOF Difficulty Only</span>
+    </div>
+    <div class="cta-row">
+      <a href="#register" class="btn btn-gold">Register Now</a>
+      <a href="#rules" class="btn btn-outline-gold">Read the Rules</a>
+      <a href="#bracket" class="btn btn-outline-cyan">View Bracket</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="scroll-dot"></div>
+  </div>
+</section>
+
+<!-- ══════════════════ STATS STRIP ══════════════════ -->
+<div class="stats-strip">
+  <div class="stats-inner">
+    <div class="stat-block"><div class="stat-val fire">32</div><div class="stat-lbl">Teams Max</div></div>
+    <div class="stat-block"><div class="stat-val white">160</div><div class="stat-lbl">Total Players</div></div>
+    <div class="stat-block"><div class="stat-val gold">$450</div><div class="stat-lbl">Prize Pool</div></div>
+    <div class="stat-block"><div class="stat-val blue">5v5</div><div class="stat-lbl">Format</div></div>
+    <div class="stat-block"><div class="stat-val white">14</div><div class="stat-lbl">Days of Competition</div></div>
+    <div class="stat-block"><div class="stat-val fire">1st</div><div class="stat-lbl">Ever Event</div></div>
+  </div>
+</div>
+
+<!-- ══════════════════ ABOUT ══════════════════ -->
+<hr class="div">
+<div class="section" id="about">
+  <p class="sl gold">Section 01</p>
+  <h2 class="st">About the<br>Tournament</h2>
+  <div class="about-grid">
+    <div class="about-text">
+      <p>The <strong>All-Star Team-Up 2K Arena | Private 5v5 Player Control Tournaments</strong> is the first event of its kind — bringing together competitive 2K players from all skill levels in a structured, professional bracket tournament with real prize money on the line.</p>
+      <p>Whether you've got a squad ready or you're rolling solo, there's a spot for you. <strong>Full teams pay $50</strong> to enter as a unit. <strong>Solo players pay $15</strong> and get placed on a balanced team with other solo registrants before the bracket drops.</p>
+      <p>Every team plays 3 Round Robin games first — records and point differential determine your seed. Then all 16 teams drop into a full <strong>Double Elimination bracket</strong>. One loss doesn't end your run. Every result is posted live. <strong>Grand Finals will be broadcast live. All other match results and standings will be posted live in Discord.</strong> This is organized, fair, and built to grow every season.</p>
+      <a href="#register" class="btn btn-fire" style="margin-top:8px;">Secure Your Spot →</a>
+    </div>
+    <div class="about-cards">
+      <div class="about-card">
+        <div class="about-card-icon">🏆</div>
+        <div><h4>Real Prize Money</h4><p>$300 to 1st • $100 to 2nd • $50 to 3rd. Paid out within 7 days of the Finals.</p></div>
+      </div>
+      <div class="about-card">
+        <div class="about-card-icon">🎮</div>
+        <div><h4>5v5 · Hall of Fame Only</h4><p>Round Robin group stage (3 games each) followed by a full Double Elimination bracket. Best of 3 per match, Best of 5 in the Grand Finals. <strong style="color:var(--fire);">HOF difficulty — no exceptions.</strong></p></div>
+      </div>
+      <div class="about-card">
+        <div class="about-card-icon">🤝</div>
+        <div><h4>Solo Queue System</h4><p>No squad? No problem. Pay $15, get matched with 4 other solo players at your skill level, and compete as a team.</p></div>
+      </div>
+      <div class="about-card">
+        <div class="about-card-icon">📡</div>
+        <div><h4>Live Streamed Finals</h4><p>Semifinals and Grand Finals broadcast live on Twitch and YouTube. Your moment to shine in front of an audience.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ REGISTRATION ══════════════════ -->
+<hr class="div">
+<div class="reg-section" id="register">
+  <div class="reg-inner">
+    <p class="sl blue">Section 02</p>
+    <h2 class="st">Register<br>Your Spot</h2>
+
+    <div class="reg-grid">
+      <div class="reg-card featured">
+        <div class="reg-pill">Most Popular</div>
+        <div class="reg-type">Full Team Entry</div>
+        <div class="reg-price"><sup>$</sup>50</div>
+        <div class="reg-note">Per team · One payment by the captain</div>
+        <h3>Come in with your squad</h3>
+        <ul class="reg-feats">
+          <li><span class="ck">✓</span> Covers all 5 players on your roster</li>
+          <li><span class="ck">✓</span> You choose your team name & lineup</li>
+          <li><span class="ck">✓</span> 1 registered substitute allowed</li>
+          <li><span class="ck">✓</span> Priority bracket seeding placement</li>
+          <li><span class="ck">✓</span> Captain controls all scheduling</li>
+          <li><span class="ck">✓</span> Captain receives prize payout directly</li>
+        </ul>
+        <a href="#staff" class="btn btn-gold" style="width:100%;text-align:center;">Register a Team → DM the TO</a>
+      </div>
+      <div class="reg-card">
+        <div class="reg-type">Solo Queue Entry</div>
+        <div class="reg-price"><sup>$</sup>15</div>
+        <div class="reg-note">Per player · We build your team</div>
+        <h3>No squad? No problem.</h3>
+        <ul class="reg-feats">
+          <li><span class="ck">✓</span> Pay $15 — we assign you to a team</li>
+          <li><span class="ck">✓</span> Matched by skill level with other solos</li>
+          <li><span class="ck">✓</span> Meet teammates in a private Discord channel</li>
+          <li><span class="ck">✓</span> Compete for the $450 prize pool ($300 / $100 / $50) ($300 / $100 / $50)</li>
+          <li><span class="ck">✓</span> Great way to find your new 2K crew</li>
+          <li><span class="cx">✗</span> Cannot choose your own teammates</li>
+        </ul>
+        <a href="#staff" class="btn btn-outline-cyan" style="width:100%;text-align:center;">Register Solo → DM the TO</a>
+      </div>
+    </div>
+
+    <div class="solo-box">
+      <h3>🎲 How Solo Queue Works</h3>
+      <p>Solo players are pooled together and assigned to balanced teams before the bracket goes live. Here's the exact process:</p>
+      <div class="solo-steps">
+        <div class="solo-step"><span class="n">Step 1</span> Pay your $15 entry fee and fill out the registration form with your skill level and weekly availability.</div>
+        <div class="solo-step"><span class="n">Step 2</span> After registration closes (TBD), we group solo players by skill level into balanced 5-player teams.</div>
+        <div class="solo-step"><span class="n">Step 3</span> You'll be introduced to your new teammates in a private Discord channel at least 3 days before Match Day 1 · July 31.</div>
+        <div class="solo-step"><span class="n">Step 4</span> Your team picks a name (or one is assigned), and you compete just like any other team from that point forward.</div>
+      </div>
+    </div>
+
+    <p class="sl gold" style="margin-bottom:16px;">Prize Pool</p>
+    <div class="prize-row">
+      <div class="prize-card first"><div class="prize-place">🥇</div><div class="prize-amount">$300</div><div class="prize-label">1st Place</div></div>
+      <div class="prize-card"><div class="prize-place">🥈</div><div class="prize-amount">$100</div><div class="prize-label">2nd Place</div></div>
+      <div class="prize-card"><div class="prize-place">🥉</div><div class="prize-amount">$50</div><div class="prize-label">3rd Place</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ RULES ══════════════════ -->
+<hr class="div">
+<div class="section" id="rules">
+  <p class="sl fire">Section 03</p>
+  <h2 class="st">Official Rules</h2>
+  <div class="rules-grid">
+
+    <div class="rule-card notice"><div class="rule-num">01</div><h3>🏟 Locker Room Setup</h3><p>The <strong style="color:var(--white)">higher-seeded team captain</strong> creates the locker room and invites the opposing captain. Before tip-off, the locker room owner must <strong style="color:var(--white)">screenshot the game settings</strong> and submit it with the match result. All settings below are mandatory — no exceptions:<br><br><strong style="color:var(--gold,#F5C518)">Required Settings:</strong><br>🏀 Mode: All-Star Team Up<br>🔒 Privacy: Private<br>⚠️ Difficulty: Hall of Fame<br>⏱ Quarter Length: 5 Minutes<br>🗺 Teams: West vs East<br><br>Any match started with incorrect settings is immediately void. The team responsible for the wrong setup forfeits that game with no replay.</p></div>
+
+    <div class="rule-card g"><div class="rule-num">03</div><h3>Registration & Payment</h3><p>Teams pay $50 (captain pays once for all 5). Solo players pay $15 each. Spots confirmed after payment only. No refunds after bracket seeding. One registration per player — no roster sharing.</p></div>
+    <div class="rule-card b"><div class="rule-num">04</div><h3>Roster Rules</h3><p>Each team must have exactly 5 registered players. You may designate 1 substitute at registration — no mid-tournament additions. The substitute must be registered and paid before the bracket is released.</p></div>
+    <div class="rule-card g"><div class="rule-num">05</div><h3>Age Requirement</h3><p>All players must be 18+. Players aged 13–17 may compete with written parental consent submitted at registration. Players under 13 are not eligible. Required for prize payout compliance.</p></div>
+    <div class="rule-card f"><div class="rule-num">06</div><h3>Match Format</h3><p><strong style="color:var(--white)">Phase 1 — Round Robin:</strong> Every team plays exactly 3 group stage games. All 16 teams participate. Records (W-L) determine seeding. Tiebreaker: point differential. <strong style="color:var(--white)">Phase 2 — Double Elimination:</strong> All 16 teams seeded into a double elimination bracket. Best of 3 per match, Best of 5 in the Grand Finals. Lose once → Losers Bracket. Lose twice → eliminated. Grand Finals reset applies if the Losers Bracket champion wins.</p></div>
+    <div class="rule-card b"><div class="rule-num">07</div><h3>Scheduling</h3><p>Captains have 48 hours to coordinate match times after bracket release. All scheduling confirmed in the #scheduling Discord channel. Failure to schedule within 48 hours = team forfeit. All times in ET.</p></div>
+    <div class="rule-card g"><div class="rule-num">19</div><h3>Substitutes & Stand-ins</h3><p>Only your registered substitute may replace a player. Unregistered stand-ins are not permitted under any circumstances. If a team cannot field 5 registered players at match time, they forfeit.</p></div>
+    <div class="rule-card f"><div class="rule-num">19</div><h3>Reporting Results</h3><p>The winning captain must post a screenshot or score in #results within 1 hour of match completion. Both captains must confirm. Unconfirmed results held 24 hours before organizer review.</p></div>
+    <div class="rule-card danger"><div class="rule-num">19</div><h3>⚠ No Cheating</h3><p>Any use of exploits, hacks, macros, or outside assistance results in immediate team disqualification and permanent bans for all involved. Reports require video evidence. No warnings — first offense is final.</p></div>
+    <div class="rule-card danger"><div class="rule-num">19</div><h3>⚠ Code of Conduct</h3><p>Harassment, hate speech, slurs, or targeted toxicity in any channel results in removal of the offending player and potential team disqualification. Captains are responsible for their roster's behavior.</p></div>
+    <div class="rule-card b"><div class="rule-num">19</div><h3>Disconnections</h3><p>Disconnect within first 60 seconds = round may restart once per match. After 60 seconds or after 1 restart, the disconnect stands. Teams continue with available players.</p></div>
+    <div class="rule-card g"><div class="rule-num">19</div><h3>Equipment</h3><p>Each player is responsible for their own hardware, internet, and power. Technical failures are not grounds for match replay beyond the one-restart rule. Prepare your setup before every match.</p></div>
+    <div class="rule-card notice"><div class="rule-num">19</div><h3>Stream Sniping</h3><p>All streamed matches require a minimum 2-minute broadcast delay. Watching your own live stream during a match for tactical information is cheating, handled under Rule 08.</p></div>
+    <div class="rule-card f"><div class="rule-num">19</div><h3>Disputes</h3><p>Submit disputes in #disputes within 2 hours of match completion with evidence. Organizer decisions are final. Toxic behavior during disputes = automatic forfeit of the dispute regardless of merit.</p></div>
+    <div class="rule-card g"><div class="rule-num">19</div><h3>Prize Payout</h3><p>Paid to winning team captain via PayPal/Venmo within 7 days of Finals. Captain distributes to teammates. 30-day claim window — unclaimed prizes are forfeited. Identity verification required.</p></div>
+    <div class="rule-card notice"><div class="rule-num">19</div><h3>Solo Queue Players</h3><p>Solo players are assigned to teams before the bracket is seeded. Once assigned, all standard team rules apply. No team switches after assignment. No refunds after team assignment is announced.</p></div>
+    <div class="rule-card b"><div class="rule-num">19</div><h3>Rule Acknowledgment</h3><p>All registered players are bound by these rules at registration regardless of whether they've read them. Rules may be updated before the tournament starts — players notified in #announcements.</p></div>
+  </div>
+  <div class="seed-box">
+    <h3>🎲 How Seeding & Format Works</h3>
+    <p>Two-phase format. Seeding is earned on the court — not assigned randomly. Here's exactly how it works:</p>
+    <div class="seed-steps">
+      <div class="seed-step"><span class="n">Phase 1</span> Every team plays 3 Round Robin games during the Group Stage (July 31, 2026). Records are tracked publicly in real time.</div>
+      <div class="seed-step"><span class="n">Seeding</span> After 3 games, all 16 teams are ranked by W-L record. Tiebreaker is point differential (total points scored minus total points allowed across all 3 games).</div>
+      <div class="seed-step"><span class="n">Phase 2</span> All 16 teams enter the Double Elimination bracket seeded 1–32. Seed 1 vs Seed 32, Seed 2 vs Seed 31, and so on.</div>
+      <div class="seed-step"><span class="n">Winners</span> Win in the Winners Bracket → stay in Winners Bracket. Lose once → drop to Losers Bracket. Lose twice → eliminated.</div>
+      <div class="seed-step"><span class="n">Grand Finals</span> Winners Bracket champion vs Losers Bracket champion. If the Losers side wins, a bracket reset game is played — both teams have 1 loss so it's a true final.</div>
+      <div class="seed-step"><span class="n">Bracket</span> Full seeded bracket published TBD after group stage ends. Captains have 24 hours to raise seeding disputes with evidence.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ SCHEDULE ══════════════════ -->
+<hr class="div">
+<div class="schedule-section" id="schedule">
+  <div class="sched-inner">
+    <p class="sl gold">Section 04</p>
+    <h2 class="st">Match Schedule</h2>
+    <div style="overflow-x:auto;">
+      <table class="sched-table">
+        <thead>
+          <tr><th>Phase</th><th>Round</th><th>Dates (ET)</th><th>Details</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr style="background:rgba(255,107,0,.04)">
+            <td style="color:var(--fire);font-weight:700;font-family:'JetBrains Mono',monospace;font-size:.72rem;">PHASE 1</td>
+            <td colspan="3" style="color:var(--fire);font-weight:600;">ROUND ROBIN — GROUP STAGE</td>
+            <td></td>
+          </tr>
+          <tr><td>Group Stage</td><td>Game 1 of 3</td><td>TBD–13</td><td>All 16 teams play their first group game · HOF difficulty · Screenshot required</td><td><span class="status s-up">Upcoming</span></td></tr>
+          <tr><td>Group Stage</td><td>Game 2 of 3</td><td>Jul 14–15</td><td>All 16 teams play their second group game</td><td><span class="status s-tbd">TBD</span></td></tr>
+          <tr><td>Group Stage</td><td>Game 3 of 3</td><td>Jul 16–18</td><td>All 16 teams play their third group game · Final records locked TBD midnight</td><td><span class="status s-tbd">TBD</span></td></tr>
+          <tr><td>Seeding</td><td>Rankings</td><td>TBD</td><td>All 16 teams ranked by W-L record · Tiebreaker: point differential · Bracket published</td><td><span class="status s-tbd">TBD</span></td></tr>
+          <tr style="background:rgba(200,80,0,.04)">
+            <td style="color:#FF9500;font-weight:700;font-family:'JetBrains Mono',monospace;font-size:.72rem;">PHASE 2</td>
+            <td colspan="3" style="color:#FF9500;font-weight:600;">DOUBLE ELIMINATION BRACKET</td>
+            <td></td>
+          </tr>
+          <tr><td>Winners Bracket</td><td>Round 1 (R1)</td><td>TBD–20</td><td>Seeds 1–16 vs Seeds 17–32 · Losers drop to Losers Bracket</td><td><span class="status s-tbd">TBD</span></td></tr>
+          <tr><td>Losers Bracket</td><td>LB Round 1</td><td>TBD</td><td>R1 losers compete · Second loss = eliminated</td><td><span class="status s-tbd">TBD</span></td></tr>
+          <tr><td>Winners Bracket</td><td>Round 2 (R2)</td><td>TBD</td><td>WB Round 1 winners · Losers drop to Losers Bracket</td><td><span class="status s-tbd">TBD</span></td></tr>
+          <tr><td>Losers Bracket</td><td>LB Round 2–4</td><td>TBD</td><td>Losers Bracket continues · One loss and you're out</td><td><span class="status s-tbd">TBD</span></td></tr>
+          <tr><td>Winners Bracket</td><td>WB Finals</td><td>TBD</td><td>Last two undefeated teams · Winner goes to Grand Finals undefeated</td><td><span class="status s-tbd">TBD</span></td></tr>
+          <tr><td>Losers Bracket</td><td>LB Finals</td><td>TBD</td><td>Last team standing in Losers Bracket · Winner goes to Grand Finals with 1 loss</td><td><span class="status s-tbd">TBD</span></td></tr>
+          <tr style="background:rgba(245,197,24,.04)"><td style="color:var(--gold);font-weight:700;">🏆 GRAND FINALS</td><td>Best of 5</td><td>TBD — Aug · 8PM ET</td><td>WB Champion vs LB Champion · Bracket reset if LB side wins · LIVE STREAMED</td><td><span class="status s-tbd">TBD</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:.75rem;color:var(--steel);margin-top:12px;font-family:'JetBrains Mono',monospace;">All times Eastern (ET). Follow #announcements in Discord for live updates and any reschedules. · <strong style="color:var(--fire);">All matches on Hall of Fame difficulty. Screenshots required with results.</strong></p>
+  </div>
+</div>
+
+<!-- ══════════════════ BRACKET ══════════════════ -->
+<hr class="div">
+<div class="section" id="bracket">
+  <p class="sl blue">Section 05</p>
+  <h2 class="st">Live Bracket</h2>
+  <p style="font-size:.85rem;color:var(--steel);margin-bottom:12px;margin-top:-32px;">Phase 1: Round Robin Group Stage (July 31, 2026) → Phase 2: Double Elimination Bracket (July 24–Aug TBD). Full bracket published TBD after group stage ends.</p><div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:28px;"><span style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.1em;padding:5px 14px;border-radius:2px;background:rgba(255,107,0,.08);border:1px solid rgba(255,107,0,.3);color:var(--fire);">Phase 1 · Round Robin</span><span style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.1em;padding:5px 14px;border-radius:2px;background:rgba(255,149,0,.06);border:1px solid rgba(255,149,0,.25);color:#FF9500;">Phase 2 · Double Elimination</span><span style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.1em;padding:5px 14px;border-radius:2px;background:rgba(245,197,24,.06);border:1px solid rgba(245,197,24,.25);color:var(--gold);">Lose Twice = Eliminated</span></div>
+  <div class="bracket-wrap">
+    <div class="bracket">
+      <div class="round">
+        <div class="round-lbl">Quarterfinals</div>
+        <div class="matches">
+          <div class="match"><div class="team win">⚡ Team Alpha <span class="tscore">2</span></div><div class="team">Team Beta <span class="tscore">0</span></div></div>
+        <div class="rule-card notice"><div class="rule-num">02</div><h3>⚠ Minimum Teams Required</h3><p>A minimum of <strong style="color:var(--white)">8 teams must be registered and paid</strong> for a tournament to run. If fewer than 8 teams register by the deadline, registered players will receive a <strong style="color:var(--white)">full refund</strong> within 3 business days and the tournament will be rescheduled or cancelled for that season. This protects all players and ensures fair competition. Season 1 registration deadline: <strong style="color:var(--white)">July 24 · Midnight ET.</strong></p></div>
+          <div class="match"><div class="team win">🔥 Shadow Squad <span class="tscore">2</span></div><div class="team">Iron Five <span class="tscore">1</span></div></div>
+          <div class="match"><div class="team tbd">Viper Unit <span class="tscore">—</span></div><div class="team tbd">Neon Wolves <span class="tscore">—</span></div></div>
+          <div class="match"><div class="team tbd">Storm Kings <span class="tscore">—</span></div><div class="team tbd">TBD <span class="tscore">—</span></div></div>
+        </div>
+      </div>
+      <div class="round">
+        <div class="round-lbl">Semifinals</div>
+        <div class="matches">
+          <div class="match"><div class="team win">⚡ Team Alpha <span class="tscore">2</span></div><div class="team">Shadow Squad <span class="tscore">1</span></div></div>
+          <div class="match"><div class="team tbd">TBD <span class="tscore">—</span></div><div class="team tbd">TBD <span class="tscore">—</span></div></div>
+        </div>
+      </div>
+      <div class="round">
+        <div class="round-lbl">Grand Finals</div>
+        <div class="matches">
+          <div class="match"><div class="team win">⚡ Team Alpha <span class="tscore">?</span></div><div class="team tbd">TBD <span class="tscore">?</span></div></div>
+        </div>
+      </div>
+      <div class="round">
+        <div class="round-lbl">Champion</div>
+        <div class="matches">
+          <div class="champ-box"><div class="champ-trophy">🏆</div><div class="clbl">2026 Champions</div><div class="cname">⚡ TBD</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ STAFF ══════════════════ -->
+<hr class="div">
+<div class="section" id="staff">
+  <p class="sl gold">Section 06</p>
+  <h2 class="st">Staff & Contact</h2>
+  <div class="staff-grid">
+    <div class="staff-card">
+      <div class="staff-av gold">🎯</div>
+      <div class="staff-role gold">Tournament Organizer</div>
+      <h3>Elijah Martinez</h3>
+      <p>Head organizer. Bracket seeding, prize payouts, final dispute rulings. Not competing.</p>
+      <div class="chips"><a href="#" class="chip">Discord: @all_star_team_up</a><a href="mailto:all_star_team_up@discord" class="chip">Email TO</a></div>
+    </div>
+    <div class="staff-card">
+      <div class="staff-av fire">🛡️</div>
+      <div class="staff-role fire">Co-Organizer / Mod</div>
+      <h3>Co-Org Name</h3>
+      <p>Scheduling, result verification, first-line dispute review. Not competing in bracket.</p>
+      <div class="chips"><a href="#" class="chip">Discord: @CoOrgTag</a></div>
+    </div>
+    <div class="staff-card">
+      <div class="staff-av blue">📡</div>
+      <div class="staff-role blue">Stream Operator</div>
+      <h3>Stream Name</h3>
+      <p>Manages live broadcast of the Grand Finals (Championship) only. All other results posted live in Discord. 2-min delay enforced on stream.</p>
+      <div class="chips"><a href="#" class="chip">Twitch: @StreamTag</a><a href="#" class="chip">YouTube</a></div>
+    </div>
+    <div class="staff-card">
+      <div class="staff-av cyan">📣</div>
+      <div class="staff-role blue">Social & Hype</div>
+      <h3>Promo Name</h3>
+      <p>Posts bracket updates, highlights, and announcements on Discord, TikTok, and Twitter/X.</p>
+      <div class="chips"><a href="#" class="chip">Twitter: @PromoTag</a><a href="#" class="chip">TikTok</a></div>
+    </div>
+  </div>
+  <div class="contact-box">
+    <h3>📬 Register & Get in Touch</h3>
+    <p>Join the <strong>All-Star Team-Up 2K Arena</strong> community on Discord (astu_2k_arena) — Private 5v5 Player Control Tournaments on Hall of Fame difficulty. $50 teams • $15 solo. Registration opens July 17.</p>
+    <div class="contact-btns">
+      <a href="https://discord.gg/TDvwrybZ2S" target="_blank" class="btn btn-gold">Join the Discord →</a>
+      <a href="mailto:all_star_team_up@discord" class="btn btn-outline-gold">Email the TO</a>
+      <a href="https://buy.stripe.com/14A3cv1olaPQ0545vCefC0c" target="_blank" class="btn btn-blue">Pay Entry Fee →</a>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ SIGNUP FORM ══════════════════ -->
+<hr class="div">
+<div class="signup-section" id="signup">
+  <div class="signup-inner">
+    <p class="sl blue">Section 07</p>
+    <h2 class="st">Sign Up<br>Right Here</h2>
+    <div class="signup-grid">
+
+      <!-- LEFT: FORM -->
+      <div>
+        <div class="sform" id="signupFormWrap">
+          <h3>Registration Form</h3>
+          <p class="fsub">Fill out the form below. Solo players are automatically grouped into balanced teams of 5 by skill level and availability.</p>
+
+          <div class="type-toggle">
+            <button class="type-btn active" onclick="setType('solo',this)">🎮 Solo Player — $10</button>
+            <button class="type-btn" onclick="setType('team',this)">👥 Full Team — $35</button>
+          </div>
+
+          <div class="solo-note" id="soloNote">
+            <span>ℹ️</span>
+            <span>You'll be placed on a team with up to 4 other solo players matched by skill level. You'll meet your teammates in a private Discord channel 3+ days before Match Day 1 · July 31. All matches are played on Hall of Fame difficulty — no exceptions.</span>
+          </div>
+
+          <div class="field-row">
+            <div class="field-group"><label>First Name *</label><input type="text" id="fname" placeholder="First name"></div>
+            <div class="field-group"><label>Last Name *</label><input type="text" id="lname" placeholder="Last name"></div>
+          </div>
+          <div class="field-group"><label>Email Address *</label><input type="email" id="email" placeholder="you@email.com"></div>
+          <div class="field-group"><label>Discord Tag *</label><input type="text" id="discord" placeholder="@all_star_team_up"></div>
+          <div class="field-group"><label>2K Username / Gamertag *</label><input type="text" id="gamertag" placeholder="Your in-game name"></div>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label>Skill Level *</label>
+              <select id="skill">
+                <option value="" disabled selected>Select level</option>
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+                <option value="pro">Pro / Competitive</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label>Preferred Position *</label>
+              <select id="position">
+                <option value="" disabled selected>Select position</option>
+                <option value="PG">Point Guard (PG)</option>
+                <option value="SG">Shooting Guard (SG)</option>
+                <option value="SF">Small Forward (SF)</option>
+                <option value="PF">Power Forward (PF)</option>
+                <option value="C">Center (C)</option>
+                <option value="any">Any / Flex</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>Availability *</label>
+            <select id="avail">
+              <option value="" disabled selected>When can you play?</option>
+              <option value="weekday-eve">Weekday Evenings (7–11 PM ET)</option>
+              <option value="weekend-day">Weekend Daytime</option>
+              <option value="weekend-eve">Weekend Evenings</option>
+              <option value="flexible">Fully Flexible</option>
+            </select>
+          </div>
+
+          <!-- TEAM-ONLY FIELDS -->
+          <div class="team-fields" id="teamFields">
+            <div class="field-group"><label>Team Name *</label><input type="text" id="teamname" placeholder="Your team's name"></div>
+            <div class="field-group">
+              <label>Teammate Discord Tags (4 players) *</label>
+              <textarea id="teammates" placeholder="List your 4 teammates Discord tags, one per line"></textarea>
+            </div>
+            <div class="field-group"><label>Captain PayPal / Venmo *</label><input type="text" id="payment" placeholder="@YourVenmo or PayPal email"></div>
+          </div>
+
+          <div class="field-group">
+            <label>Anything else? (optional)</label>
+            <textarea id="notes" placeholder="Prior experience, questions, special requests..." style="min-height:60px;"></textarea>
+          </div>
+
+          <div class="agree-row">
+            <input type="checkbox" id="agree">
+            <label for="agree">I have read and agree to the <a href="#rules">Official Rules</a>. I understand my spot is confirmed only after payment is received and all TO decisions are final.</label>
+          </div>
+
+          <button class="btn-submit" id="submitBtn" onclick="handleSubmit(event)">Submit Registration →</button>
+        </div>
+
+        <!-- SUCCESS -->
+        <div class="form-success" id="formSuccess">
+          <div class="success-icon">🎮</div>
+          <div class="success-title">You're In!</div>
+          <p class="success-msg">Registration received. The TO will confirm your spot after payment. Check Discord DMs within 24 hours.</p>
+          <div class="success-team" id="successTeamBox"></div>
+          <p class="success-msg" style="margin-top:12px;">Next: <strong style="color:var(--gold);">Pay your entry fee</strong> and DM the TO your payment confirmation to lock in your spot.</p>
+          <div style="display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;">
+            <a href="#staff" class="btn btn-gold">DM the TO →</a>
+            <button onclick="resetForm()" style="background:transparent;color:var(--gold);border:2px solid var(--gold);padding:14px 30px;border-radius:3px;cursor:pointer;font-weight:700;font-size:.86rem;letter-spacing:.06em;text-transform:uppercase;font-family:'Inter',sans-serif;">Register Another</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: LIVE ROSTER BOARD -->
+      <div class="roster-board">
+        <div class="roster-board-title">🔴 Live Solo Queue</div>
+        <p class="roster-board-sub">Solo players are auto-grouped into teams of 5 by skill. Watch the queue fill in real time.</p>
+
+        <div class="cap-summary">
+          <h4>Overall Registration</h4>
+          <div class="cap-row2"><span>Teams registered</span><span id="teamCount">3 / 16</span></div>
+          <div class="cap-row2"><span>Solo players queued</span><span id="soloCount">3 / 5 (Team forming)</span></div>
+          <div class="cap-row2"><span>Registration closes July 24 · Midnight ET</span><span style="color:var(--fire);">TBD · Midnight ET</span></div>
+          <div class="cap-bar2"><div class="cap-fill2" id="capFill" style="width:19%"></div></div>
+        </div>
+
+        <!-- SLOT A -->
+        <div class="team-slot open" id="slotA">
+          <div class="slot-header">
+            <span class="slot-name">Solo Squad A</span>
+            <span class="slot-status open" id="slotAStatus">3 / 5 · Open</span>
+          </div>
+          <div class="slot-members" id="slotAMembers">
+            <div class="slot-member"><div class="av">JD</div><span class="mn filled">JDaGoat</span><span class="pos">PG · Intermediate</span></div>
+            <div class="slot-member"><div class="av">MX</div><span class="mn filled">MaxBuckets</span><span class="pos">SF · Advanced</span></div>
+            <div class="slot-member"><div class="av">TR</div><span class="mn filled">TreyWayy</span><span class="pos">SG · Intermediate</span></div>
+            <div class="slot-member" id="slotA-4"><div class="av empty">4</div><span class="mn">Open slot</span><span class="pos">Any</span></div>
+            <div class="slot-member" id="slotA-5"><div class="av empty">5</div><span class="mn">Open slot</span><span class="pos">Any</span></div>
+          </div>
+          <div class="skill-bar-wrap">
+            <div class="skill-bar-label"><span>Avg Skill</span><span>Intermediate</span></div>
+            <div class="skill-bar"><div class="skill-fill" style="width:55%"></div></div>
+          </div>
+        </div>
+
+        <!-- SLOT B -->
+        <div class="team-slot open" id="slotB">
+          <div class="slot-header">
+            <span class="slot-name">Solo Squad B</span>
+            <span class="slot-status open" id="slotBStatus">1 / 5 · Open</span>
+          </div>
+          <div class="slot-members" id="slotBMembers">
+            <div class="slot-member"><div class="av">KD</div><span class="mn filled">KD2KPro</span><span class="pos">C · Advanced</span></div>
+            <div class="slot-member" id="slotB-2"><div class="av empty">2</div><span class="mn">Open slot</span><span class="pos">Any</span></div>
+            <div class="slot-member" id="slotB-3"><div class="av empty">3</div><span class="mn">Open slot</span><span class="pos">Any</span></div>
+            <div class="slot-member" id="slotB-4"><div class="av empty">4</div><span class="mn">Open slot</span><span class="pos">Any</span></div>
+            <div class="slot-member" id="slotB-5"><div class="av empty">5</div><span class="mn">Open slot</span><span class="pos">Any</span></div>
+          </div>
+          <div class="skill-bar-wrap">
+            <div class="skill-bar-label"><span>Avg Skill</span><span>Advanced</span></div>
+            <div class="skill-bar"><div class="skill-fill" style="width:72%"></div></div>
+          </div>
+        </div>
+
+        <p style="font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.1em;color:var(--steel);text-align:center;">Teams grouped by skill level · Updates on every registration</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SEASON SCHEDULE STRIP -->
+<div style="background:#0a0a0a;border-top:1px solid #1a1a1a;border-bottom:1px solid #1a1a1a;padding:40px 24px;">
+  <div style="max-width:1100px;margin:0 auto;">
+    <p style="font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:#555;text-align:center;margin-bottom:8px;">3 Seasons · S1 Reg Jul 17–24 · Games Jul 31 · 2026</p>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,5vw,3.5rem);text-align:center;color:#F7F7F7;letter-spacing:.06em;margin-bottom:32px;">Season Schedule</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2px;background:#1a1a1a;border:2px solid #1a1a1a;">
+
+      <!-- Season 1 -->
+      <div style="background:#0e0e0e;padding:32px 28px;border-left:4px solid #FF6B00;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:#FF6B00;margin-bottom:8px;">Season 01</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:#F7F7F7;line-height:1;margin-bottom:4px;">July–August</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.1em;color:#FF6B00;margin-bottom:16px;">2026 · Reg Opens Jul 17 · Deadline Jul 24 · Reg Jul 17–24 · Games Jul 31</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="font-size:.82rem;color:#888;display:flex;gap:8px;align-items:center;"><span style="width:6px;height:6px;border-radius:50%;background:#FF6B00;flex-shrink:0;display:inline-block;"></span>NBA 2K26 PS5 Next Gen</div>
+          <div style="font-size:.82rem;color:#888;display:flex;gap:8px;align-items:center;"><span style="width:6px;height:6px;border-radius:50%;background:#FF6B00;flex-shrink:0;display:inline-block;"></span>NBA 2K26 PS4 Current Gen</div>
+          <div style="font-size:.82rem;color:#888;display:flex;gap:8px;align-items:center;"><span style="width:6px;height:6px;border-radius:50%;background:#FF6B00;flex-shrink:0;display:inline-block;"></span>NBA 2K25 PS5 &amp; PS4</div>
+        </div>
+        <div style="margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,107,0,.6);background:rgba(255,107,0,.08);border:1px solid rgba(255,107,0,.2);padding:5px 12px;border-radius:2px;display:inline-block;">🟢 Registration Opens July 17s July 17</div>
+      </div>
+
+      <!-- Season 2 -->
+      <div style="background:#0e0e0e;padding:32px 28px;border-left:4px solid #A259FF;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:#A259FF;margin-bottom:8px;">Season 02</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:#F7F7F7;line-height:1;margin-bottom:4px;">September</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.1em;color:#555;margin-bottom:16px;">2026 · Dates TBD</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="font-size:.82rem;color:#888;display:flex;gap:8px;align-items:center;"><span style="width:6px;height:6px;border-radius:50%;background:#A259FF;flex-shrink:0;display:inline-block;"></span>NBA 2K26 PS5 Next Gen</div>
+          <div style="font-size:.82rem;color:#888;display:flex;gap:8px;align-items:center;"><span style="width:6px;height:6px;border-radius:50%;background:#A259FF;flex-shrink:0;display:inline-block;"></span>NBA 2K26 PS4 Current Gen</div>
+          <div style="font-size:.82rem;color:#888;display:flex;gap:8px;align-items:center;"><span style="width:6px;height:6px;border-radius:50%;background:#A259FF;flex-shrink:0;display:inline-block;"></span>NBA 2K25 PS5 &amp; PS4</div>
+        </div>
+        <div style="margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:#555;background:#1a1a1a;border:1px solid #2e2e2e;padding:5px 12px;border-radius:2px;display:inline-block;">⏳ Coming Soon</div>
+      </div>
+
+      <!-- Season 3 -->
+      <div style="background:#0e0e0e;padding:32px 28px;border-left:4px solid #00CFFF;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:#00CFFF;margin-bottom:8px;">Season 03</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:#F7F7F7;line-height:1;margin-bottom:4px;">October</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.1em;color:#555;margin-bottom:16px;">2026 · Dates TBD</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="font-size:.82rem;color:#888;display:flex;gap:8px;align-items:center;"><span style="width:6px;height:6px;border-radius:50%;background:#00CFFF;flex-shrink:0;display:inline-block;"></span>NBA 2K26 PS5 Next Gen</div>
+          <div style="font-size:.82rem;color:#888;display:flex;gap:8px;align-items:center;"><span style="width:6px;height:6px;border-radius:50%;background:#00CFFF;flex-shrink:0;display:inline-block;"></span>NBA 2K26 PS4 Current Gen</div>
+          <div style="font-size:.82rem;color:#888;display:flex;gap:8px;align-items:center;"><span style="width:6px;height:6px;border-radius:50%;background:#00CFFF;flex-shrink:0;display:inline-block;"></span>NBA 2K25 PS5 &amp; PS4</div>
+        </div>
+        <div style="margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:#555;background:#1a1a1a;border:1px solid #2e2e2e;padding:5px 12px;border-radius:2px;display:inline-block;">⏳ Coming Soon</div>
+      </div>
+
+    </div>
+
+    <!-- Season totals -->
+    <div style="margin-top:24px;background:#0e0e0e;border:1px solid #1a1a1a;border-left:4px solid #F5C518;padding:20px 28px;border-radius:2px;display:flex;gap:32px;flex-wrap:wrap;align-items:center;">
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;color:#555;margin-bottom:3px;">Total Tournaments</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:#F5C518;">9</div>
+      </div>
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;color:#555;margin-bottom:3px;">Total Prize Money</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:#F5C518;">$4,050</div>
+      </div>
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;color:#555;margin-bottom:3px;">Teams Per Season</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:#F5C518;">48 Max</div>
+      </div>
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;color:#555;margin-bottom:3px;">Entry Fee</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:#F5C518;">$50 / $15</div>
+      </div>
+      <div style="margin-left:auto;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;color:#555;margin-bottom:3px;">Join Now</div>
+        <a href="https://discord.gg/TDvwrybZ2S" target="_blank" style="background:#F5C518;color:#000;font-family:'Inter',sans-serif;font-weight:700;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;padding:10px 22px;border-radius:3px;text-decoration:none;display:inline-block;">discord.gg/TDvwrybZ2S →</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════ FINAL CTA ══════════════════ -->
+<div class="cta-section">
+  <div class="cta-inner">
+    <div class="cta-crown">👑</div>
+    <div class="cta-eyebrow">Spots Are Filling Fast</div>
+    <h2 class="cta-title">
+      <span class="fire">ARE</span> <span class="gold">YOU</span><br>
+      <span class="blue">READY?</span>
+    </h2>
+    <p class="cta-sub">16 teams. $500 on the line. The first ever NBA 2K26 All-Star Team-Up 2K Arena Tournament. Register before spots run out.</p>
+    <div class="cta-capacity">7 of 16 team slots filled</div>
+    <div class="cap-bar"><div class="cap-fill"></div></div>
+    <div class="cta-row" style="margin-top:32px;">
+      <a href="https://buy.stripe.com/14A3cv1olaPQ0545vCefC0c" target="_blank" class="btn btn-gold">Register a Team — $50</a>
+      <a href="https://buy.stripe.com/5kQ3cv1ol8HI9FEe28efC0d" target="_blank" class="btn btn-outline-cyan">Go Solo — $15</a>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ FOOTER ══════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">⚡ All-Star Team-Up 2K Arena · PS4</div>
+    <div class="footer-links">
+      <a href="#about">About</a>
+      <a href="#register">Register</a>
+      <a href="#rules">Rules</a>
+      <a href="#schedule">Schedule</a>
+      <a href="#bracket">Bracket</a>
+      <a href="#staff">Staff</a>
+      <a href="#">Discord</a>
+    </div>
+    <div class="footer-copy">© 2026 NBA 2K26 All-Star Team-Up 2K Arena PS4 Tournament · Not affiliated with 2K Sports or the NBA · All rights reserved</div>
+  </div>
+</footer>
+
+<script>
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener('click',e=>{
+      const t=document.querySelector(a.getAttribute('href'));
+      if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'});}
+    });
+  });
+
+  // ── SIGNUP FORM LOGIC ──
+  let regType = 'solo';
+  // Tracks solo registrations: {skill, gamertag, position}
+  let soloQueue = {
+    intermediate: [{tag:'JDaGoat',pos:'PG'},{tag:'MaxBuckets',pos:'SF'},{tag:'TreyWayy',pos:'SG'}],
+    advanced: [{tag:'KD2KPro',pos:'C'}],
+    beginner: [],
+    pro: []
+  };
+
+  function setType(type, btn) {
+    regType = type;
+    document.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('teamFields').classList.toggle('visible', type==='team');
+    document.getElementById('soloNote').style.display = type==='solo' ? 'flex' : 'none';
+  }
+
+  function getInitials(name) {
+    return name.slice(0,2).toUpperCase();
+  }
+
+  function skillLabel(skill) {
+    return {beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced',pro:'Pro'}[skill] || skill;
+  }
+
+  function skillPct(skill) {
+    return {beginner:25,intermediate:52,advanced:72,pro:92}[skill] || 50;
+  }
+
+  function findOrCreateSlot(skill) {
+    // Find first slot in same skill tier with space
+    const queue = soloQueue[skill] || [];
+    return queue;
+  }
+
+  function buildSuccessBox(gamertag, skill, position, isTeam, teamName) {
+    if (isTeam) {
+      return `<h4>Team Registration Received</h4>
+        <ul class="team-members">
+          <li class="team-member you"><span class="dot"></span>${gamertag} (Captain) — ${position}</li>
+          <li class="team-member"><span class="dot"></span>Your 4 teammates will be confirmed after payment</li>
+        </ul>
+        <p style="font-size:.78rem;color:var(--steel);margin-top:10px;">Team: <strong style="color:var(--gold)">${teamName || 'TBD'}</strong> · Entry fee: <strong style="color:var(--gold)">$50</strong></p>`;
+    }
+    // Solo — show current queue for their skill level
+    const queue = soloQueue[skill] || [];
+    const total = Math.min(queue.length, 5);
+    let memberHTML = '';
+    for (let i=0; i<queue.length && i<4; i++) {
+      memberHTML += `<li class="team-member"><span class="dot"></span>${queue[i].tag} — ${queue[i].pos}</li>`;
+    }
+    memberHTML += `<li class="team-member you"><span class="dot"></span>${gamertag} — ${position} <span style="color:var(--gold);font-size:.75rem;margin-left:6px;">← You</span></li>`;
+    const remaining = 5 - (queue.length + 1);
+    for (let i=0; i<remaining && i<3; i++) {
+      memberHTML += `<li class="team-member" style="opacity:.4"><span class="dot" style="background:var(--ash)"></span>Waiting for player...</li>`;
+    }
+    return `<h4>Your Solo Squad · ${skillLabel(skill)} Tier</h4>
+      <ul class="team-members">${memberHTML}</ul>
+      <p style="font-size:.78rem;color:var(--steel);margin-top:10px;">Entry fee: <strong style="color:var(--gold)">$15</strong> · You'll be introduced to your full team on Discord before Match Day 1 · July 31.</p>`;
+  }
+
+  function updateRosterBoard(gamertag, skill, position) {
+    // Add to appropriate slot visually
+    const slotSkillMap = {
+      beginner: 'B', intermediate: 'A', advanced: 'B', pro: 'B'
+    };
+    const slotId = soloQueue[skill] && soloQueue[skill].length < 3 ? 'A' : 'B';
+    const slot = document.getElementById('slot' + slotId);
+    if (!slot) return;
+    const members = slot.querySelectorAll('.slot-member');
+    for (let m of members) {
+      if (m.querySelector('.av.empty')) {
+        const av = m.querySelector('.av');
+        av.classList.remove('empty');
+        av.textContent = getInitials(gamertag);
+        const mn = m.querySelector('.mn');
+        mn.classList.add('filled','you-label');
+        mn.textContent = gamertag + ' ← You';
+        const pos = m.querySelector('.pos');
+        pos.textContent = position + ' · ' + skillLabel(skill);
+        // Update status badge
+        const filled = slot.querySelectorAll('.av:not(.empty)').length;
+        const statusEl = document.getElementById('slot' + slotId + 'Status');
+        if (statusEl) {
+          if (filled >= 5) {
+            statusEl.textContent = 'Full ✓';
+            statusEl.className = 'slot-status full';
+            slot.className = 'team-slot full';
+          } else {
+            statusEl.textContent = filled + ' / 5 · Open';
+          }
+        }
+        break;
+      }
+    }
+    // Update capacity bar
+    const totalSolos = Object.values(soloQueue).reduce((a,b)=>a+b.length,0) + 1;
+    const pct = Math.min(Math.round(((7 + Math.ceil(totalSolos/5)) / 32) * 100), 100);
+    const fill = document.getElementById('capFill');
+    if (fill) fill.style.width = pct + '%';
+    const tc = document.getElementById('teamCount');
+    if (tc) tc.textContent = (7 + Math.ceil(totalSolos/5)) + ' / 32';
+    const sc = document.getElementById('soloCount');
+    if (sc) sc.textContent = (totalSolos % 5) + ' / 5 (Team forming)';
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    const fname = document.getElementById('fname').value.trim();
+    const lname = document.getElementById('lname').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const discord = document.getElementById('discord').value.trim();
+    const gamertag = document.getElementById('gamertag').value.trim();
+    const skill = document.getElementById('skill').value;
+    const position = document.getElementById('position').value;
+    const avail = document.getElementById('avail').value;
+    const agreed = document.getElementById('agree').checked;
+    const teamname = document.getElementById('teamname')?.value.trim() || '';
+
+    if (!fname||!lname||!email||!discord||!gamertag||!skill||!position||!avail) {
+      alert('Please fill in all required fields.');return;
+    }
+    if (!agreed) {alert('Please agree to the Official Rules to continue.');return;}
+    if (regType==='team') {
+      const teammates = document.getElementById('teammates')?.value.trim();
+      const payment = document.getElementById('payment')?.value.trim();
+      if (!teamname||!teammates||!payment) {alert('Please fill in all team fields.');return;}
+    }
+
+    const btn = document.getElementById('submitBtn');
+    btn.textContent = 'Submitting...';
+    const stripeTeam = 'https://buy.stripe.com/14A3cv1olaPQ0545vCefC0c';
+    const stripeSolo = 'https://buy.stripe.com/5kQ3cv1ol8HI9FEe28efC0d';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      // Add to solo queue
+      if (regType === 'solo') {
+        if (!soloQueue[skill]) soloQueue[skill] = [];
+        soloQueue[skill].push({tag: gamertag, pos: position});
+        updateRosterBoard(gamertag, skill, position);
+      }
+
+      // Build success box
+      const box = document.getElementById('successTeamBox');
+      box.innerHTML = buildSuccessBox(gamertag, skill, position, regType==='team', teamname);
+
+      // Show success
+      document.getElementById('signupFormWrap').style.display = 'none';
+      const success = document.getElementById('formSuccess');
+      success.style.display = 'block';
+      success.classList.add('visible');
+      success.scrollIntoView({behavior:'smooth',block:'start'});
+      setTimeout(() => { window.open(regType === 'team' ? 'https://buy.stripe.com/14A3cv1olaPQ0545vCefC0c' : 'https://buy.stripe.com/5kQ3cv1ol8HI9FEe28efC0d', '_blank'); }, 1500);
+    }, 900);
+  }
+
+  function resetForm() {
+    document.getElementById('signupFormWrap').style.display = 'block';
+    document.getElementById('formSuccess').style.display = 'none';
+    document.getElementById('formSuccess').classList.remove('visible');
+    document.getElementById('submitBtn').textContent = 'Submit Registration →';
+    document.getElementById('submitBtn').disabled = false;
+    ['fname','lname','email','discord','gamertag','notes'].forEach(id=>{
+      const el=document.getElementById(id); if(el) el.value='';
+    });
+    ['skill','position','avail'].forEach(id=>{
+      const el=document.getElementById(id); if(el) el.selectedIndex=0;
+    });
+    document.getElementById('agree').checked = false;
+  }
+
+  // Nav highlight on scroll
+  const sections=document.querySelectorAll('section[id],[id]');
+  const navLinks=document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll',()=>{
+    let cur='';
+    sections.forEach(s=>{if(window.scrollY>=s.offsetTop-120)cur=s.id;});
+    navLinks.forEach(a=>{
+      a.style.color=a.getAttribute('href')==='#'+cur?'#F5C518':'';
+    });
+  });
+</script>
+</body>
+</html>
