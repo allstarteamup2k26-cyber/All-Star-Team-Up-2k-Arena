@@ -12,7 +12,46 @@ Official website for the **All-Star Team-Up 2K Arena** — premium paid NBA 2K t
 - Live solo queue roster board
 - Embedded forms with success states
 - Multiple tournament pages (2K26 PS5, 2K26 PS4, 2K25)
-- mobile
+- Mobile responsive
+
+## 🚀 Deploying to GitHub Pages
+
+### Quick Deploy (Recommended)
+
+1. **Download** the latest release or clone this repository.
+
+2. **Create a new GitHub repository**:
+   - Go to [github.com/new](https://github.com/new)
+   - Name it something like `all-star-team-up-2k-arena`
+   - Make it **Public**
+
+3. **Upload the files**:
+   - Upload all `.html` files to the root of your repository
+   - Or drag & drop the entire folder contents
+
+4. **Enable GitHub Pages**:
+   - Go to your repo → **Settings** → **Pages**
+   - Under "Build and deployment":
+     - **Source**: Deploy from a branch
+     - **Branch**: `main` (or `master`)
+     - **Folder**: `/ (root)`
+   - Click **Save**
+
+5. Your site will be live at:
+   ```
+   https://yourusername.github.io/all-star-team-up-2k-arena
+   ```
+
+> **Note**: It may take 1–2 minutes for the site to appear after enabling GitHub Pages.
+
+## 📁 File Structure
+
+```
+├── index.html                    # Main homepage with countdown
+├── nba2k26-ps5-tournament.html   # PS5 Next Gen tournament + registration
+├── nba2k26-ps4-tournament.html   # PS4 Current Gen tournament + registration
+├── nba2k25-tournament.html       # 2K25 tournament + registration
+└── README.md
 ```
 
 ## ⚙️ Important Notes
