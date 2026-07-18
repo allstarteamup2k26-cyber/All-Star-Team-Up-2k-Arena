@@ -773,7 +773,6 @@ footer{background:var(--ink);border-top:1px solid var(--ash);padding:32px 24px;}
     <div class="contact-btns">
       <a href="https://discord.gg/gpJm9W3h" target="_blank" class="btn btn-gold">Join the Discord →</a>
       <a href="mailto:all_star_team_up@discord" class="btn btn-outline-gold">Email the TO</a>
-      <a href="https://buy.stripe.com/3cI6oH1ol6zA4lkcY4efC0b" target="_blank" class="btn btn-blue">Pay Entry Fee →</a>
     </div>
   </div>
 </div>
@@ -1029,8 +1028,8 @@ footer{background:var(--ink);border-top:1px solid var(--ash);padding:32px 24px;}
     <div class="cta-capacity">7 of 16 team slots filled</div>
     <div class="cap-bar"><div class="cap-fill"></div></div>
     <div class="cta-row" style="margin-top:32px;">
-      <a href="https://buy.stripe.com/3cI6oH1ol6zA4lkcY4efC0b" target="_blank" class="btn btn-gold">Register a Team — $50</a>
-      <a href="https://buy.stripe.com/3cIbJ11olcXY7xwf6cefC0a" target="_blank" class="btn btn-outline-cyan">Go Solo — $15</a>
+      <a href="https://buy.stripe.com/14AeVdeb70bc2dc3nuefC0i" target="_blank" class="btn btn-gold">Register a Team — $50</a>
+      <a href="https://buy.stripe.com/8x2aEX3wt6zA6ts1fmefC0j" target="_blank" class="btn btn-outline-cyan">Go Solo — $15</a>
     </div>
   </div>
 </div>
@@ -1193,8 +1192,8 @@ footer{background:var(--ink);border-top:1px solid var(--ash);padding:32px 24px;}
 
     const btn = document.getElementById('submitBtn');
     btn.textContent = 'Submitting...';
-    const stripeTeam = 'https://buy.stripe.com/3cI6oH1ol6zA4lkcY4efC0b';
-    const stripeSolo = 'https://buy.stripe.com/3cIbJ11olcXY7xwf6cefC0a';
+    const stripeTeam = 'https://buy.stripe.com/14AeVdeb70bc2dc3nuefC0i';
+    const stripeSolo = 'https://buy.stripe.com/8x2aEX3wt6zA6ts1fmefC0j';
     btn.disabled = true;
 
     setTimeout(() => {
@@ -1215,7 +1214,7 @@ footer{background:var(--ink);border-top:1px solid var(--ash);padding:32px 24px;}
       success.style.display = 'block';
       success.classList.add('visible');
       success.scrollIntoView({behavior:'smooth',block:'start'});
-      setTimeout(() => { window.open(regType === 'team' ? 'https://buy.stripe.com/3cI6oH1ol6zA4lkcY4efC0b' : 'https://buy.stripe.com/3cIbJ11olcXY7xwf6cefC0a', '_blank'); }, 1500);
+      setTimeout(() => { window.open(regType === 'team' ? stripeTeam : stripeSolo, '_blank'); }, 1500);
     }, 900);
   }
 
